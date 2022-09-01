@@ -18,11 +18,7 @@ export const MyFeedPost = ({
 }: {
   post: ArrayElement<PostGetPostsResponse>;
 }) => {
-  const {
-    isLoading,
-    isFetching,
-    data: session,
-  } = trpc.useQuery(["auth.getSession"]);
+  const { data: session } = trpc.useQuery(["auth.getSession"]);
 
   return (
     <div className="my-8">
@@ -38,7 +34,7 @@ export const MyFeedPost = ({
             />
           </div>
 
-          <p className="text-sm font-semibold">{session?.user?.name}</p>
+          <p className="text-sm font-semibold">{post.author.name}</p>
 
           {/* the little dot */}
           <span className="mx-2 inline-block h-1 w-1 rounded-full bg-gray-500"></span>
