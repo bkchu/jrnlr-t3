@@ -20,12 +20,19 @@ const Home: NextPage = () => {
 
   const [isMyPosts, setIsMyPosts] = useState(false);
 
-  const { isLoading: isLoadingPosts, data: posts } = trpc.useQuery([
-    "post.getPosts",
+  const { isLoading: isLoadingMyPosts, data: myPosts } = trpc.useQuery(
+    ["post.get-posts.my-posts"],
     {
-      isMyPosts,
-    },
-  ]);
+      enabled: isMyPosts,
+    }
+  );
+
+  const { isLoading: isLoadingFeed, data: feedPosts } = trpc.useQuery(
+    ["post.get-posts.feed"],
+    {
+      enabled: !isMyPosts,
+    }
+  );
 
   const activeTabStyle = "bg-red-200 font-bold";
 
@@ -58,22 +65,6 @@ const Home: NextPage = () => {
           ) : (
             <button onClick={() => signIn("google")}>Sign In</button>
           )}
-
-          {/* <label
-            htmlFor="default-toggle"
-            className="inline-flex relative items-center cursor-pointer"
-          >
-            <input
-              type="checkbox"
-              value=""
-              id="default-toggle"
-              className="sr-only peer"
-            />
-            <div className="w-11 h-6 bg-pink-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-pink-300 dark:peer-focus:ring-pink-800 rounded-full peer dark:bg-pink-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-pink-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-pink-600 peer-checked:bg-pink-600"></div>
-            <span className="ml-3 text-sm font-medium text-pink-900 dark:text-pink-300">
-              Toggle me
-            </span>
-          </label> */}
         </header>
 
         <nav className="mt-5 flex rounded-[10px] border border-red-200 p-px">
@@ -98,12 +89,12 @@ const Home: NextPage = () => {
         </nav>
 
         <main className="container mx-auto mt-4">
-          {isLoadingPosts ? (
+          {isLoadingMyPosts || isLoadingFeed ? (
             <p>Loading posts...</p>
-          ) : isMyPosts && posts ? (
-            <MyPosts posts={posts} />
-          ) : !isMyPosts && posts ? (
-            <MyFeed posts={posts} />
+          ) : isMyPosts && myPosts ? (
+            <MyPosts posts={myPosts} />
+          ) : !isMyPosts && feedPosts ? (
+            <MyFeed posts={feedPosts} />
           ) : null}
         </main>
 

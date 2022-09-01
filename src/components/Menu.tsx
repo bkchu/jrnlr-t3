@@ -37,20 +37,23 @@ export const Menu = ({
   postId: string;
   isPublished: boolean;
 }) => {
-  const queryClient = useQueryClient();
+  const utils = trpc.useContext();
   const { mutateAsync: publishPost } = trpc.useMutation("post.publish", {
     onSuccess: () => {
-      queryClient.invalidateQueries("post.getPosts");
+      utils.invalidateQueries(["post.get-posts.feed"]);
+      utils.invalidateQueries(["post.get-posts.my-posts"]);
     },
   });
   const { mutateAsync: unpublishPost } = trpc.useMutation("post.unpublish", {
     onSuccess: () => {
-      queryClient.invalidateQueries("post.getPosts");
+      utils.invalidateQueries(["post.get-posts.feed"]);
+      utils.invalidateQueries(["post.get-posts.my-posts"]);
     },
   });
   const { mutateAsync: deletePost } = trpc.useMutation("post.delete", {
     onSuccess: () => {
-      queryClient.invalidateQueries("post.getPosts");
+      utils.invalidateQueries(["post.get-posts.feed"]);
+      utils.invalidateQueries(["post.get-posts.my-posts"]);
     },
   });
   return (

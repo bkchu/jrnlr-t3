@@ -1,29 +1,42 @@
+import { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { createProtectedRouter } from "./protected-router";
 
 export const postRouter = createProtectedRouter()
-  .query("getPosts", {
-    input: z.object({
-      isMyPosts: z.boolean(),
-    }),
-    async resolve({ ctx, input }) {
-      if (input.isMyPosts) {
-        const myPosts = await ctx.prisma.post.findMany({
-          where: {
-            author: {
-              id: ctx.session.user.id,
-            },
+  .query("get-posts.my-posts", {
+    async resolve({ ctx }) {
+      // const userSelect = Prisma.validator<Prisma.UserSelect>()({
+      //   image: true,
+      //   name: true,
+      // });
+      const myPosts = await ctx.prisma.post.findMany({
+        where: {
+          author: {
+            id: ctx.session.user.id,
           },
-          orderBy: {
-            createdAt: "desc",
-          },
-        });
-        return myPosts;
-      }
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
+
+      return myPosts;
+    },
+  })
+  .query("get-posts.feed", {
+    async resolve({ ctx }) {
       const posts = await ctx.prisma.post.findMany({
         where: {
           isPublished: true,
+        },
+        include: {
+          author: {
+            select: {
+              image: true,
+              name: true,
+            },
+          },
         },
         orderBy: {
           createdAt: "desc",
@@ -38,6 +51,20 @@ export const postRouter = createProtectedRouter()
       postId: z.string(),
     }),
     async resolve({ ctx, input }) {
+      const post = await ctx.prisma.post.findFirst({
+        where: {
+          id: input.postId,
+        },
+      });
+
+      if (!post) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+
+      if (post.authorId !== ctx.session.user.id) {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
+
       return await ctx.prisma.post.update({
         where: {
           id: input.postId,
@@ -53,6 +80,20 @@ export const postRouter = createProtectedRouter()
       postId: z.string(),
     }),
     async resolve({ ctx, input }) {
+      const post = await ctx.prisma.post.findFirst({
+        where: {
+          id: input.postId,
+        },
+      });
+
+      if (!post) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+
+      if (post.authorId !== ctx.session.user.id) {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
+
       return await ctx.prisma.post.update({
         where: {
           id: input.postId,
@@ -98,7 +139,7 @@ export const postRouter = createProtectedRouter()
       });
 
       if (!postToDelete) {
-        throw new TRPCError({ code: "BAD_REQUEST" });
+        throw new TRPCError({ code: "NOT_FOUND" });
       }
 
       if (postToDelete.authorId !== ctx.session.user.id) {

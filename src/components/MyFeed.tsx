@@ -1,10 +1,11 @@
-import { Post } from "@prisma/client";
 import Image from "next/image";
 import { getDurationSinceDate } from "../utils/date";
-import { trpc } from "../utils/trpc";
+import { inferQueryOutput, trpc } from "../utils/trpc";
 import { Menu } from "./Menu";
 
-export const MyFeed = ({ posts }: { posts: Post[] }) => (
+type PostGetPostsResponse = inferQueryOutput<"post.get-posts.feed">;
+
+export const MyFeed = ({ posts }: { posts: PostGetPostsResponse }) => (
   <>
     {posts.map((post) => (
       <MyFeedPost key={post.id} post={post} />
@@ -12,7 +13,11 @@ export const MyFeed = ({ posts }: { posts: Post[] }) => (
   </>
 );
 
-export const MyFeedPost = ({ post }: { post: Post }) => {
+export const MyFeedPost = ({
+  post,
+}: {
+  post: ArrayElement<PostGetPostsResponse>;
+}) => {
   const {
     isLoading,
     isFetching,
@@ -26,8 +31,8 @@ export const MyFeedPost = ({ post }: { post: Post }) => {
           <div className="mr-3 h-8">
             <Image
               className="rounded-full"
-              src={session?.user?.image ?? ""}
-              alt={session?.user?.name ?? ""}
+              src={post.author.image ?? ""}
+              alt={post.author.name ?? ""}
               width={32}
               height={32}
             />
@@ -43,7 +48,9 @@ export const MyFeedPost = ({ post }: { post: Post }) => {
             {getDurationSinceDate(post.createdAt)}
           </span>
         </div>
-        <Menu isPublished={post.isPublished} postId={post.id} />
+        {session?.user.id === post.authorId && (
+          <Menu isPublished={post.isPublished} postId={post.id} />
+        )}
       </div>
       <h2 className="text-lg font-bold">{post.title}</h2>
       <div>{`${post.content.slice(0, 300)}${
