@@ -46,6 +46,24 @@ export const postRouter = createProtectedRouter()
       return posts;
     },
   })
+  .query("get-post", {
+    input: z.object({
+      postId: z.string(),
+    }),
+    async resolve({ ctx, input }) {
+      const post = await ctx.prisma.post.findFirst({
+        where: {
+          id: input.postId,
+        },
+      });
+
+      if (!post) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+
+      return post;
+    },
+  })
   .mutation("publish", {
     input: z.object({
       postId: z.string(),
@@ -106,8 +124,8 @@ export const postRouter = createProtectedRouter()
   })
   .mutation("create", {
     input: z.object({
-      title: z.string(),
-      content: z.string(),
+      title: z.string().min(1),
+      content: z.string().min(1),
       shouldPublishImmediately: z.boolean().default(false),
     }),
     async resolve({ ctx, input }) {
@@ -125,6 +143,41 @@ export const postRouter = createProtectedRouter()
       });
 
       return { id: newPost.id };
+    },
+  })
+  .mutation("edit", {
+    input: z.object({
+      postId: z.string(),
+      title: z.string().optional(),
+      content: z.string().optional(),
+    }),
+    async resolve({ ctx, input }) {
+      const postToEdit = await ctx.prisma.post.findFirst({
+        where: {
+          id: input.postId,
+        },
+      });
+
+      if (!postToEdit) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+
+      if (postToEdit.authorId !== ctx.session.user.id) {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
+
+      const editedPost = await ctx.prisma.post.update({
+        where: {
+          id: input.postId,
+        },
+        data: {
+          ...postToEdit,
+          content: input.content,
+          title: input.title,
+        },
+      });
+
+      return editedPost;
     },
   })
   .mutation("delete", {

@@ -1,34 +1,8 @@
 import { Menu as HeadlessUiMenu, Transition } from "@headlessui/react";
+import { useRouter } from "next/router";
 import { Fragment } from "react";
-import {
-  TbChevronDown,
-  TbDotsVertical,
-  TbFileExport,
-  TbTrash,
-} from "react-icons/tb";
-import { useQueryClient } from "react-query";
+import { TbDotsVertical, TbFileExport, TbTrash, TbEdit } from "react-icons/tb";
 import { trpc } from "../utils/trpc";
-
-const solutions = [
-  {
-    name: "Insights",
-    description: "Measure actions your users take",
-    href: "##",
-    icon: TbChevronDown,
-  },
-  {
-    name: "Automations",
-    description: "Create your own targeted content",
-    href: "##",
-    icon: TbChevronDown,
-  },
-  {
-    name: "Reports",
-    description: "Keep track of your growth",
-    href: "##",
-    icon: TbChevronDown,
-  },
-];
 
 export const Menu = ({
   postId,
@@ -37,6 +11,7 @@ export const Menu = ({
   postId: string;
   isPublished: boolean;
 }) => {
+  const router = useRouter();
   const utils = trpc.useContext();
   const { mutateAsync: publishPost } = trpc.useMutation("post.publish", {
     onSuccess: () => {
@@ -96,6 +71,26 @@ export const Menu = ({
                     aria-hidden="true"
                   />
                   {isPublished ? "Unpublish" : "Publish"}
+                </button>
+              )}
+            </HeadlessUiMenu.Item>
+          </div>
+          <div className="px-1 py-1">
+            <HeadlessUiMenu.Item>
+              {({ active }) => (
+                <button
+                  onClick={() => router.push(`/post/${postId}/edit`)}
+                  className={`${
+                    active ? "bg-red-400 text-white" : "bg-white text-black"
+                  } group flex w-full items-center rounded-md px-2 py-2 text-sm transition-colors duration-100`}
+                >
+                  <TbEdit
+                    className={`mr-2 h-5 w-5 ${
+                      active ? "text-white" : "text-black"
+                    }`}
+                    aria-hidden="true"
+                  />
+                  Edit
                 </button>
               )}
             </HeadlessUiMenu.Item>

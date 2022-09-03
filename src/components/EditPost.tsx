@@ -3,28 +3,34 @@ import { useRouter } from "next/router";
 import { FormEventHandler, useState } from "react";
 import { TbArrowLeft } from "react-icons/tb";
 import { useQueryClient } from "react-query";
-import { Layout } from "../components/Layout";
+import { Layout } from "./Layout";
 import { trpc } from "../utils/trpc";
 
-const Create = () => {
+export const EditPost = ({ postId }: { postId: string }) => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const queryClient = useQueryClient();
   const router = useRouter();
-  const { mutateAsync: createPost } = trpc.useMutation("post.create", {
+
+  trpc.useQuery(["post.get-post", { postId }], {
+    onSuccess: (data) => {
+      setTitle(data.title);
+      setContent(data.content);
+    },
+  });
+
+  const { mutateAsync: editPost } = trpc.useMutation("post.edit", {
     onSuccess: () => {
       queryClient.invalidateQueries("post.getPosts");
       router.push("/");
     },
   });
-  const [shouldPublishImmediately, setShouldPublishImmediately] =
-    useState(false);
 
   const handleSubmit: FormEventHandler<HTMLFormElement> | undefined = (e) => {
     e.preventDefault();
-    createPost({
+    editPost({
+      postId,
       content,
-      shouldPublishImmediately,
       title,
     });
   };
@@ -40,7 +46,7 @@ const Create = () => {
             />
           </button>
         </Link>
-        <h1 className="text-2xl font-bold leading-none"> Create a new post</h1>
+        <h1 className="text-2xl font-bold leading-none">Edit</h1>
       </header>
       <form onSubmit={handleSubmit}>
         <div className="my-6">
@@ -75,34 +81,13 @@ const Create = () => {
           placeholder="What are you feeling today?"
         ></textarea>
 
-        <div className="block">
-          <label
-            htmlFor="set-is-published-toggle"
-            className="relative mt-6 inline-flex cursor-pointer items-center"
-          >
-            <input
-              type="checkbox"
-              checked={shouldPublishImmediately}
-              onChange={(e) => setShouldPublishImmediately(e.target.checked)}
-              id="set-is-published-toggle"
-              className="peer sr-only"
-            />
-            <div className="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-red-300 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-200 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-red-600"></div>
-            <span className="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">
-              Publish immediately
-            </span>
-          </label>
-        </div>
-
         <button
           type="submit"
           className="my-6 rounded-full bg-red-300 px-5 py-2.5 text-center text-sm font-medium text-black hover:bg-red-400 focus:outline-none focus:ring-4 focus:ring-red-100 dark:bg-red-400 dark:hover:bg-red-500 dark:focus:ring-red-900"
         >
-          {shouldPublishImmediately ? "Publish" : "Save as draft"}
+          Update Post
         </button>
       </form>
     </Layout>
   );
 };
-
-export default Create;
