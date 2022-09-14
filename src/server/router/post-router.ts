@@ -70,10 +70,6 @@ export const postRouter = createProtectedRouter()
         },
       });
 
-      if (!post) {
-        throw new TRPCError({ code: "NOT_FOUND" });
-      }
-
       return post;
     },
   })
@@ -87,10 +83,6 @@ export const postRouter = createProtectedRouter()
           id: input.postId,
         },
       });
-
-      if (!post) {
-        throw new TRPCError({ code: "NOT_FOUND" });
-      }
 
       if (post.authorId !== ctx.session.user.id) {
         throw new TRPCError({ code: "UNAUTHORIZED" });
@@ -116,10 +108,6 @@ export const postRouter = createProtectedRouter()
           id: input.postId,
         },
       });
-
-      if (!post) {
-        throw new TRPCError({ code: "NOT_FOUND" });
-      }
 
       if (post.authorId !== ctx.session.user.id) {
         throw new TRPCError({ code: "UNAUTHORIZED" });
@@ -171,10 +159,6 @@ export const postRouter = createProtectedRouter()
         },
       });
 
-      if (!postToEdit) {
-        throw new TRPCError({ code: "NOT_FOUND" });
-      }
-
       if (postToEdit.authorId !== ctx.session.user.id) {
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
@@ -203,10 +187,6 @@ export const postRouter = createProtectedRouter()
           id: input.postId,
         },
       });
-
-      if (!postToDelete) {
-        throw new TRPCError({ code: "NOT_FOUND" });
-      }
 
       if (postToDelete.authorId !== ctx.session.user.id) {
         throw new TRPCError({ code: "UNAUTHORIZED" });

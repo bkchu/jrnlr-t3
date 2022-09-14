@@ -111,10 +111,6 @@ export const commentRouter = createProtectedRouter()
         },
       });
 
-      if (!commentToUpdate) {
-        throw new TRPCError({ code: "NOT_FOUND" });
-      }
-
       if (commentToUpdate.authorId !== ctx.session.user.id) {
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
