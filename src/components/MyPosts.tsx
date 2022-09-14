@@ -1,7 +1,6 @@
 import { Post } from "@prisma/client";
 import clsx from "clsx";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { getDurationSinceDate } from "../utils/date";
 import { Menu } from "./Menu";
 
@@ -14,7 +13,6 @@ export const MyPosts = ({ posts }: { posts: Post[] }) => (
 );
 
 export const MyPost = ({ post }: { post: Post }) => {
-  const router = useRouter();
   return (
     <div className="group my-8 cursor-pointer">
       <div className="relative mb-2 flex items-center justify-between">

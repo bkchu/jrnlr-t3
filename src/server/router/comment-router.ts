@@ -82,15 +82,11 @@ export const commentRouter = createProtectedRouter()
       commentId: z.string(),
     }),
     async resolve({ ctx, input }) {
-      const commentToDelete = await ctx.prisma.comment.findFirst({
+      const commentToDelete = await ctx.prisma.comment.findUniqueOrThrow({
         where: {
           id: input.commentId,
         },
       });
-
-      if (!commentToDelete) {
-        throw new TRPCError({ code: "NOT_FOUND" });
-      }
 
       if (commentToDelete.authorId !== ctx.session.user.id) {
         throw new TRPCError({ code: "UNAUTHORIZED" });
@@ -109,7 +105,7 @@ export const commentRouter = createProtectedRouter()
       content: z.string(),
     }),
     async resolve({ ctx, input }) {
-      const commentToUpdate = await ctx.prisma.comment.findFirst({
+      const commentToUpdate = await ctx.prisma.comment.findUniqueOrThrow({
         where: {
           id: input.commentId,
         },

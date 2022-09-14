@@ -20,9 +20,9 @@ export const EditPost = ({ postId }: { postId: string }) => {
   });
 
   const { mutateAsync: editPost } = trpc.useMutation("post.edit", {
-    onSuccess: () => {
+    onSuccess: (editedPost) => {
       queryClient.invalidateQueries("post.getPosts");
-      router.push("/");
+      router.push(`/post/${editedPost.id}`);
     },
   });
 

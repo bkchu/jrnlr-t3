@@ -5,10 +5,6 @@ import { createProtectedRouter } from "./protected-router";
 export const postRouter = createProtectedRouter()
   .query("get-posts.my-posts", {
     async resolve({ ctx }) {
-      // const userSelect = Prisma.validator<Prisma.UserSelect>()({
-      //   image: true,
-      //   name: true,
-      // });
       const myPosts = await ctx.prisma.post.findMany({
         where: {
           author: {
@@ -55,7 +51,7 @@ export const postRouter = createProtectedRouter()
       postId: z.string(),
     }),
     async resolve({ ctx, input }) {
-      const post = await ctx.prisma.post.findFirst({
+      const post = await ctx.prisma.post.findUniqueOrThrow({
         where: {
           id: input.postId,
         },
@@ -86,7 +82,7 @@ export const postRouter = createProtectedRouter()
       postId: z.string(),
     }),
     async resolve({ ctx, input }) {
-      const post = await ctx.prisma.post.findFirst({
+      const post = await ctx.prisma.post.findUniqueOrThrow({
         where: {
           id: input.postId,
         },
@@ -115,7 +111,7 @@ export const postRouter = createProtectedRouter()
       postId: z.string(),
     }),
     async resolve({ ctx, input }) {
-      const post = await ctx.prisma.post.findFirst({
+      const post = await ctx.prisma.post.findUniqueOrThrow({
         where: {
           id: input.postId,
         },
@@ -169,7 +165,7 @@ export const postRouter = createProtectedRouter()
       content: z.string().min(1),
     }),
     async resolve({ ctx, input }) {
-      const postToEdit = await ctx.prisma.post.findFirst({
+      const postToEdit = await ctx.prisma.post.findUniqueOrThrow({
         where: {
           id: input.postId,
         },
@@ -202,7 +198,7 @@ export const postRouter = createProtectedRouter()
       postId: z.string(),
     }),
     async resolve({ ctx, input }) {
-      const postToDelete = await ctx.prisma.post.findFirst({
+      const postToDelete = await ctx.prisma.post.findUniqueOrThrow({
         where: {
           id: input.postId,
         },
