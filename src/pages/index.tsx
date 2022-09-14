@@ -84,7 +84,7 @@ const Home: NextPage = () => {
             )}
             onClick={() => setIsMyPosts(true)}
           >
-            Drafts
+            My Posts
           </button>
         </nav>
 
@@ -100,7 +100,20 @@ const Home: NextPage = () => {
 
         <Link href="/create">
           <button className="absolute bottom-5 right-5 flex h-12 w-12 items-center justify-center rounded-full bg-red-200 text-black">
-            <TbPlus className="h-5 w-5 text-inherit" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="h-6 w-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 4.5v15m7.5-7.5h-15"
+              />
+            </svg>
           </button>
         </Link>
       </Layout>

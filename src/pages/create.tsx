@@ -96,7 +96,7 @@ const Create = () => {
 
         <button
           type="submit"
-          className="my-6 rounded-full bg-red-300 px-5 py-2.5 text-center text-sm font-medium text-black hover:bg-red-400 focus:outline-none focus:ring-4 focus:ring-red-100 dark:bg-red-400 dark:hover:bg-red-500 dark:focus:ring-red-900"
+          className="my-6 rounded-lg bg-red-300 px-4 py-2 text-center text-sm font-medium text-black hover:bg-red-400 focus:outline-none focus:ring-4 focus:ring-red-100 dark:bg-red-400 dark:hover:bg-red-500 dark:focus:ring-red-900"
         >
           {shouldPublishImmediately ? "Publish" : "Save as draft"}
         </button>

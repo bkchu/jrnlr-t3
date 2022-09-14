@@ -7,24 +7,26 @@ export const getDurationSinceDate = (date: Date) => {
   });
 
   if (duration.years) {
-    return `${duration.years}y`;
+    return `${duration.years}y ago`;
   }
   if (duration.months) {
-    return `${duration.months}m`;
+    return `${duration.months}m ago`;
   }
   if (duration.weeks) {
-    return `${duration.weeks}w`;
+    return `${duration.weeks}w ago`;
   }
   if (duration.days) {
-    return `${duration.days}d`;
+    return `${duration.days}d ago`;
   }
   if (duration.hours) {
-    return `${duration.hours}h`;
+    return `${duration.hours}h ago`;
   }
   if (duration.minutes) {
-    return `${duration.minutes}m`;
+    return `${duration.minutes}m ago`;
   }
   if (duration.seconds) {
-    return `${duration.seconds}s`;
+    return `${duration.seconds}s ago`;
   }
+
+  return `Just now`;
 };

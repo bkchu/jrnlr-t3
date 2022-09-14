@@ -1,46 +1,23 @@
 import { Menu as HeadlessUiMenu, Transition } from "@headlessui/react";
-import { useRouter } from "next/router";
 import { Fragment } from "react";
-import { trpc } from "../utils/trpc";
 
-export const Menu = ({
-  postId,
-  isPublished,
-}: {
-  postId: string;
-  isPublished: boolean;
-}) => {
-  const router = useRouter();
-  const utils = trpc.useContext();
-  const { mutateAsync: publishPost } = trpc.useMutation("post.publish", {
-    onSuccess: () => {
-      utils.invalidateQueries(["post.get-posts.feed"]);
-      utils.invalidateQueries(["post.get-posts.my-posts"]);
-    },
-  });
-  const { mutateAsync: unpublishPost } = trpc.useMutation("post.unpublish", {
-    onSuccess: () => {
-      utils.invalidateQueries(["post.get-posts.feed"]);
-      utils.invalidateQueries(["post.get-posts.my-posts"]);
-    },
-  });
-  const { mutateAsync: deletePost } = trpc.useMutation("post.delete", {
-    onSuccess: () => {
-      utils.invalidateQueries(["post.get-posts.feed"]);
-      utils.invalidateQueries(["post.get-posts.my-posts"]);
-    },
-  });
+type CommentMenuProps = {
+  onEdit: () => void;
+  onDelete: () => void;
+};
+
+export const CommentMenu = ({ onEdit, onDelete }: CommentMenuProps) => {
   return (
     <HeadlessUiMenu as="div" className="relative inline-block text-left">
       <div>
-        <HeadlessUiMenu.Button className="group flex h-8 w-8 items-center justify-center rounded-md text-white transition-colors duration-100 hover:bg-red-200 hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75">
+        <HeadlessUiMenu.Button className="group flex h-6 w-6 items-center justify-center rounded-md text-white transition-colors duration-100 hover:bg-red-200 hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="h-5 w-5 text-gray-500 transition-colors duration-100 group-hover:text-red-500"
+            className="h-3 w-3 text-gray-500 transition-colors duration-100 group-hover:text-red-500"
           >
             <path
               strokeLinecap="round"
@@ -64,60 +41,7 @@ export const Menu = ({
             <HeadlessUiMenu.Item>
               {({ active }) => (
                 <button
-                  onClick={() =>
-                    isPublished
-                      ? unpublishPost({ postId })
-                      : publishPost({ postId })
-                  }
-                  className={`${
-                    active ? "bg-red-400 text-white" : "bg-red-200 text-black"
-                  } group flex w-full items-center rounded-md px-2 py-2 text-sm transition-colors duration-100`}
-                >
-                  {isPublished ? (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke="currentColor"
-                      className={`mr-2 h-5 w-5 ${
-                        active ? "text-white" : "text-black"
-                      }`}
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"
-                      />
-                    </svg>
-                  ) : (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke="currentColor"
-                      className={`mr-2 h-5 w-5 ${
-                        active ? "text-white" : "text-black"
-                      }`}
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"
-                      />
-                    </svg>
-                  )}
-                  {isPublished ? "Unpublish" : "Publish"}
-                </button>
-              )}
-            </HeadlessUiMenu.Item>
-          </div>
-          <div className="px-1 py-1">
-            <HeadlessUiMenu.Item>
-              {({ active }) => (
-                <button
-                  onClick={() => router.push(`/post/${postId}/edit`)}
+                  onClick={onEdit}
                   className={`${
                     active ? "bg-red-400 text-white" : "bg-white text-black"
                   } group flex w-full items-center rounded-md px-2 py-2 text-sm transition-colors duration-100`}
@@ -147,7 +71,7 @@ export const Menu = ({
             <HeadlessUiMenu.Item>
               {({ active }) => (
                 <button
-                  onClick={() => deletePost({ postId })}
+                  onClick={onDelete}
                   className={`${
                     active ? "bg-red-500 text-white" : "text-gray-900"
                   } group flex w-full items-center rounded-md px-2 py-2 text-sm transition-colors duration-100`}

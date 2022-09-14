@@ -1,4 +1,3 @@
-import { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { createProtectedRouter } from "./protected-router";
@@ -37,6 +36,11 @@ export const postRouter = createProtectedRouter()
               name: true,
             },
           },
+          _count: {
+            select: {
+              comments: true,
+            },
+          },
         },
         orderBy: {
           createdAt: "desc",
@@ -54,6 +58,19 @@ export const postRouter = createProtectedRouter()
       const post = await ctx.prisma.post.findFirst({
         where: {
           id: input.postId,
+        },
+        include: {
+          author: {
+            select: {
+              image: true,
+              name: true,
+            },
+          },
+          _count: {
+            select: {
+              comments: true,
+            },
+          },
         },
       });
 
@@ -148,8 +165,8 @@ export const postRouter = createProtectedRouter()
   .mutation("edit", {
     input: z.object({
       postId: z.string(),
-      title: z.string().optional(),
-      content: z.string().optional(),
+      title: z.string().min(1),
+      content: z.string().min(1),
     }),
     async resolve({ ctx, input }) {
       const postToEdit = await ctx.prisma.post.findFirst({
