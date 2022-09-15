@@ -6,13 +6,9 @@ import { getDurationSinceDate } from "../utils/date";
 import { inferQueryOutput, trpc } from "../utils/trpc";
 import { Menu } from "./Menu";
 
-type PostGetPostsResponse = inferQueryOutput<"post.get-posts.feed">;
+type PostGetPostResponse = inferQueryOutput<"post.get-post">;
 
-export const Post = ({
-  post,
-}: {
-  post: ArrayElement<PostGetPostsResponse>;
-}) => {
+export const Post = ({ post }: { post: PostGetPostResponse }) => {
   const { data: session } = trpc.useQuery(["auth.getSession"]);
 
   return (

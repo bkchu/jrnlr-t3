@@ -32,9 +32,13 @@ export const postRouter = createProtectedRouter()
               name: true,
             },
           },
+          // only gets the information for my own like, even if there are more likes
+          likes: true,
           _count: {
             select: {
               comments: true,
+              // this will get the count of all of the likes
+              likes: true,
             },
           },
         },
@@ -43,7 +47,11 @@ export const postRouter = createProtectedRouter()
         },
       });
 
-      return posts;
+      // put a simple boolean 'liked'
+      return posts.map((post) => ({
+        ...post,
+        liked: post.likes.some((like) => like.userId === ctx.session.user.id),
+      }));
     },
   })
   .query("get-post", {
@@ -197,5 +205,58 @@ export const postRouter = createProtectedRouter()
           id: input.postId,
         },
       });
+    },
+  })
+  .mutation("like", {
+    input: z.object({
+      postId: z.string(),
+    }),
+    async resolve({ ctx, input }) {
+      const like = await ctx.prisma.postLike.create({
+        data: {
+          user: {
+            connect: {
+              id: ctx.session.user.id,
+            },
+          },
+          post: {
+            connect: {
+              id: input.postId,
+            },
+          },
+        },
+      });
+
+      return like;
+    },
+  })
+  .mutation("unlike", {
+    input: z.object({
+      postId: z.string(),
+    }),
+    async resolve({ ctx, input }) {
+      const existingLike = await ctx.prisma.postLike.findUniqueOrThrow({
+        where: {
+          postId_userId: {
+            userId: ctx.session.user.id,
+            postId: input.postId,
+          },
+        },
+      });
+
+      if (existingLike.userId !== ctx.session.user.id) {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
+
+      const unliked = await ctx.prisma.postLike.delete({
+        where: {
+          postId_userId: {
+            userId: ctx.session.user.id,
+            postId: input.postId,
+          },
+        },
+      });
+
+      return unliked;
     },
   });

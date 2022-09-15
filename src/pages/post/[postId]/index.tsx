@@ -1,27 +1,55 @@
+import { createSSGHelpers } from "@trpc/react/ssg";
+import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import { unstable_getServerSession } from "next-auth";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import superjson from "superjson";
 import { CommentLoader } from "../../../components/comments/CommentLoader";
 import { CommentsSection } from "../../../components/comments/CommentsSection";
 import { Layout } from "../../../components/Layout";
 import { Post } from "../../../components/Post";
 import { PostLoader } from "../../../components/PostLoader";
+import { appRouter } from "../../../server/router";
 import { inferQueryOutput, trpc } from "../../../utils/trpc";
+import { authOptions } from "../../api/auth/[...nextauth]";
+import { prisma } from "../../../server/db/client";
 
 type PostGetPostResponse = inferQueryOutput<"post.get-post">;
 
-const PostPage = () => {
-  const router = useRouter();
+export const getServerSideProps: GetServerSideProps<{
+  postId: string;
+}> = async ({ params, req, res }) => {
+  const session = await unstable_getServerSession(req, res, authOptions);
+  const ssg = createSSGHelpers({
+    router: appRouter,
+    ctx: { session, prisma },
+    transformer: superjson, // optional - adds superjson serialization
+  });
 
+  const postId = params?.postId as string;
+
+  await ssg.fetchQuery("post.get-post", {
+    postId,
+  });
+
+  return {
+    props: {
+      trpcState: ssg.dehydrate(),
+      postId,
+    },
+  };
+};
+
+const PostPage = (
+  props: InferGetServerSidePropsType<typeof getServerSideProps>
+) => {
   const { data: post, isLoading: isLoadingPost } = trpc.useQuery([
     "post.get-post",
-    { postId: router.query.postId as string },
+    { postId: props.postId },
   ]);
 
   const { isLoading: isLoadingComments } = trpc.useQuery([
     "comment.get-comments-by-post-id",
-    {
-      postId: router.query.postId as string,
-    },
+    { postId: props.postId },
   ]);
 
   return (
