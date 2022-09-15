@@ -86,7 +86,7 @@ export const MyFeedPost = ({
       <div>
         <div className="prose mb-4">
           <Link href={`/post/${post.id}`}>
-            <h2 className="transition-colors duration-75 hover:text-red-400">
+            <h2 className="cursor-pointer transition-colors duration-75 hover:text-red-400">
               {post.title}
             </h2>
           </Link>
