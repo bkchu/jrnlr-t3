@@ -1,3 +1,4 @@
+import { differenceInSeconds } from "date-fns";
 import Image from "next/future/image";
 import { useState } from "react";
 import { getDurationSinceDate } from "../../utils/date";
@@ -55,7 +56,7 @@ export const Comment = ({
                 {getDurationSinceDate(comment.createdAt)}
               </span>
               {/* show edited status */}
-              {comment.updatedAt > comment.createdAt ? (
+              {differenceInSeconds(comment.updatedAt, comment.createdAt) > 1 ? (
                 <>
                   {/* the little dot */}
                   <span className="mx-2 inline-block h-1 w-1 rounded-full bg-gray-500"></span>
