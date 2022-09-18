@@ -2,6 +2,7 @@ import { Post } from "@prisma/client";
 import clsx from "clsx";
 import Link from "next/link";
 import { getDurationSinceDate } from "../utils/date";
+import { trpc } from "../utils/trpc";
 import { Menu } from "./Menu";
 
 export const MyPosts = ({ posts }: { posts: Post[] }) => (
@@ -13,6 +14,9 @@ export const MyPosts = ({ posts }: { posts: Post[] }) => (
 );
 
 export const MyPost = ({ post }: { post: Post }) => {
+  const utils = trpc.useContext();
+  const invalidatePost = () =>
+    utils.invalidateQueries(["post.get-posts.my-posts"]);
   return (
     <div className="group my-8 cursor-pointer">
       <div className="relative mb-2 flex items-center justify-between">
@@ -39,7 +43,13 @@ export const MyPost = ({ post }: { post: Post }) => {
           </span>
         </p>
         <div className="absolute -top-1 right-0">
-          <Menu isPublished={post.isPublished} postId={post.id} />
+          <Menu
+            isPublished={post.isPublished}
+            postId={post.id}
+            onPublish={invalidatePost}
+            onUnpublish={invalidatePost}
+            onDelete={invalidatePost}
+          />
         </div>
       </div>
       <Link href={`/post/${post.id}`}>

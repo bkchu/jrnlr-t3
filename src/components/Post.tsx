@@ -13,19 +13,16 @@ type PostGetPostResponse = inferQueryOutput<"post.get-post">;
 
 export const Post = ({ post }: { post: PostGetPostResponse }) => {
   const utils = trpc.useContext();
+  const invalidatePost = () => utils.invalidateQueries(["post.get-post"]);
   const { data: session } = trpc.useQuery(["auth.getSession"]);
 
   const [growStyle, growTrigger] = useGrowBoop();
 
   const { mutate: like } = trpc.useMutation("post.like", {
-    onSuccess: () => {
-      utils.invalidateQueries(["post.get-post"]);
-    },
+    onSuccess: invalidatePost,
   });
   const { mutate: unlike } = trpc.useMutation("post.unlike", {
-    onSuccess: () => {
-      utils.invalidateQueries(["post.get-post"]);
-    },
+    onSuccess: invalidatePost,
   });
 
   const toggleLike = () => {
@@ -67,7 +64,13 @@ export const Post = ({ post }: { post: PostGetPostResponse }) => {
             </span>
           </div>
           {session?.user.id === post.authorId && (
-            <Menu isPublished={post.isPublished} postId={post.id} />
+            <Menu
+              isPublished={post.isPublished}
+              postId={post.id}
+              onPublish={invalidatePost}
+              onUnpublish={invalidatePost}
+              onDelete={invalidatePost}
+            />
           )}
         </div>
 

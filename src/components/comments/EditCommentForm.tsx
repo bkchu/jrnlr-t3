@@ -15,7 +15,7 @@ export const EditCommentForm = ({
   initialComment,
   onClose,
 }: EditCommentFormProps) => {
-  const [comment, setComment] = useState(initialComment.content);
+  const [comment, setComment] = useState(initialComment.content ?? "");
   const utils = trpc.useContext();
 
   const { mutate: updateComment } = trpc.useMutation("comment.update", {

@@ -24,16 +24,18 @@ export const MyFeedPost = ({
   post: ArrayElement<PostGetPostsResponse>;
 }) => {
   const utils = trpc.useContext();
+
+  const invalidateFeedPost = () =>
+    utils.invalidateQueries(["post.get-posts.feed"]);
+
   const { data: session } = trpc.useQuery(["auth.getSession"]);
+
   const { mutate: like } = trpc.useMutation("post.like", {
-    onSuccess: () => {
-      utils.invalidateQueries(["post.get-posts.feed"]);
-    },
+    onSuccess: invalidateFeedPost,
   });
+
   const { mutate: unlike } = trpc.useMutation("post.unlike", {
-    onSuccess: () => {
-      utils.invalidateQueries(["post.get-posts.feed"]);
-    },
+    onSuccess: invalidateFeedPost,
   });
 
   const [growStyle, growTrigger] = useGrowBoop();
@@ -78,7 +80,13 @@ export const MyFeedPost = ({
 
         {session?.user.id === post.authorId && (
           <div className="absolute top-0 right-0">
-            <Menu isPublished={post.isPublished} postId={post.id} />
+            <Menu
+              isPublished={post.isPublished}
+              postId={post.id}
+              onPublish={invalidateFeedPost}
+              onUnpublish={invalidateFeedPost}
+              onDelete={invalidateFeedPost}
+            />
           </div>
         )}
       </div>

@@ -3,31 +3,38 @@ import { useRouter } from "next/router";
 import { Fragment } from "react";
 import { trpc } from "../utils/trpc";
 
+type MenuProps = {
+  postId: string;
+  isPublished: boolean;
+  onPublish?: () => void;
+  onUnpublish?: () => void;
+  onDelete?: () => void;
+};
+
 export const Menu = ({
   postId,
   isPublished,
-}: {
-  postId: string;
-  isPublished: boolean;
-}) => {
+  onPublish,
+  onUnpublish,
+  onDelete,
+}: MenuProps) => {
   const router = useRouter();
-  const utils = trpc.useContext();
+
   const { mutateAsync: publishPost } = trpc.useMutation("post.publish", {
     onSuccess: () => {
-      utils.invalidateQueries(["post.get-posts.feed"]);
-      utils.invalidateQueries(["post.get-posts.my-posts"]);
+      onPublish?.();
     },
   });
+
   const { mutateAsync: unpublishPost } = trpc.useMutation("post.unpublish", {
     onSuccess: () => {
-      utils.invalidateQueries(["post.get-posts.feed"]);
-      utils.invalidateQueries(["post.get-posts.my-posts"]);
+      onUnpublish?.();
     },
   });
+
   const { mutateAsync: deletePost } = trpc.useMutation("post.delete", {
     onSuccess: () => {
-      utils.invalidateQueries(["post.get-posts.feed"]);
-      utils.invalidateQueries(["post.get-posts.my-posts"]);
+      onDelete?.();
     },
   });
   return (

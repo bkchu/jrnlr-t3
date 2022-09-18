@@ -62,7 +62,7 @@ export const commentRouter = createProtectedRouter()
     input: z.object({
       postId: z.string(),
       parentId: z.string().optional(),
-      content: z.string(),
+      content: z.string().min(1),
     }),
     async resolve({ ctx, input }) {
       const comment = await ctx.prisma.comment.create({
@@ -108,7 +108,7 @@ export const commentRouter = createProtectedRouter()
   .mutation("update", {
     input: z.object({
       commentId: z.string(),
-      content: z.string(),
+      content: z.string().min(1),
     }),
     async resolve({ ctx, input }) {
       const commentToUpdate = await ctx.prisma.comment.findUniqueOrThrow({
