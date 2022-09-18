@@ -5,7 +5,6 @@ import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { TbPlus } from "react-icons/tb";
 import { Layout } from "../components/Layout";
 import { MyFeed } from "../components/MyFeed";
 import { MyPosts } from "../components/MyPosts";
@@ -99,7 +98,7 @@ const Home: NextPage = () => {
         </main>
 
         <Link href="/create">
-          <button className="absolute bottom-5 right-5 flex h-12 w-12 items-center justify-center rounded-full bg-red-200 text-black">
+          <button className="fixed bottom-5 right-5 flex h-12 w-12 items-center justify-center rounded-full bg-red-200 text-black">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"

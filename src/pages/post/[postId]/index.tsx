@@ -8,10 +8,10 @@ import { CommentsSection } from "../../../components/comments/CommentsSection";
 import { Layout } from "../../../components/Layout";
 import { Post } from "../../../components/Post";
 import { PostLoader } from "../../../components/PostLoader";
+import { prisma } from "../../../server/db/client";
 import { appRouter } from "../../../server/router";
 import { inferQueryOutput, trpc } from "../../../utils/trpc";
 import { authOptions } from "../../api/auth/[...nextauth]";
-import { prisma } from "../../../server/db/client";
 
 type PostGetPostResponse = inferQueryOutput<"post.get-post">;
 

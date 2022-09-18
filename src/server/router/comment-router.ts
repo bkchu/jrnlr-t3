@@ -92,9 +92,15 @@ export const commentRouter = createProtectedRouter()
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
 
-      await ctx.prisma.comment.delete({
+      await ctx.prisma.comment.update({
         where: {
           id: input.commentId,
+        },
+        data: {
+          author: {
+            disconnect: true,
+          },
+          content: null,
         },
       });
     },

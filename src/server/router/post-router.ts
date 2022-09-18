@@ -33,11 +33,15 @@ export const postRouter = createProtectedRouter()
             },
           },
           // only gets the information for my own like, even if there are more likes
-          likes: true,
+          likes: {
+            where: {
+              userId: ctx.session.user.id,
+            },
+          },
           _count: {
             select: {
               comments: true,
-              // this will get the count of all of the likes
+              // this will still get the count of all of the likes
               likes: true,
             },
           },
@@ -50,7 +54,7 @@ export const postRouter = createProtectedRouter()
       // put a simple boolean 'liked'
       return posts.map((post) => ({
         ...post,
-        liked: post.likes.some((like) => like.userId === ctx.session.user.id),
+        liked: post.likes.length > 0,
       }));
     },
   })
@@ -70,15 +74,21 @@ export const postRouter = createProtectedRouter()
               name: true,
             },
           },
+          likes: {
+            where: {
+              userId: ctx.session.user.id,
+            },
+          },
           _count: {
             select: {
               comments: true,
+              likes: true,
             },
           },
         },
       });
 
-      return post;
+      return { ...post, liked: post.likes.length > 0 };
     },
   })
   .mutation("publish", {

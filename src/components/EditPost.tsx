@@ -3,8 +3,8 @@ import { useRouter } from "next/router";
 import { FormEventHandler, useState } from "react";
 import { TbArrowLeft } from "react-icons/tb";
 import { useQueryClient } from "react-query";
-import { Layout } from "./Layout";
 import { trpc } from "../utils/trpc";
+import { Layout } from "./Layout";
 
 export const EditPost = ({ postId }: { postId: string }) => {
   const [title, setTitle] = useState("");

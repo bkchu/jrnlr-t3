@@ -36,16 +36,32 @@ export const Comment = ({
 
       {/* actual comment */}
       <div className="flex py-1">
-        <Image
-          className="h-8 w-8 rounded-full object-cover"
-          src={comment.author.image ?? ""}
-          alt={comment.author.name ?? ""}
-          width={32}
-          height={32}
-        />
+        {comment.author ? (
+          <Image
+            src={comment.author.image ?? ""}
+            className="h-8 w-8 rounded-full object-cover"
+            alt={comment.author.name ?? ""}
+            width={32}
+            height={32}
+          />
+        ) : (
+          <svg
+            className="h-8 w-8 rounded-full object-cover text-gray-200"
+            aria-hidden="true"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              fillRule="evenodd"
+              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z"
+              clipRule="evenodd"
+            ></path>
+          </svg>
+        )}
         <div className="ml-3 flex-1">
           <div className="">
-            <p className="text-sm font-semibold">{comment.author.name}</p>
+            <p className="text-sm font-semibold">{comment.author?.name}</p>
 
             <div className="flex items-center">
               {/* the little dot */}
@@ -56,7 +72,8 @@ export const Comment = ({
                 {getDurationSinceDate(comment.createdAt)}
               </span>
               {/* show edited status */}
-              {differenceInSeconds(comment.updatedAt, comment.createdAt) > 1 ? (
+              {differenceInSeconds(comment.updatedAt, comment.createdAt) > 1 &&
+              !!comment.author ? (
                 <>
                   {/* the little dot */}
                   <span className="mx-2 inline-block h-1 w-1 rounded-full bg-gray-500"></span>
@@ -67,9 +84,11 @@ export const Comment = ({
                 <div className="ml-auto">
                   <CommentMenu
                     onEdit={() => setIsEditing(true)}
-                    onDelete={function (): void {
-                      throw new Error("Function not implemented.");
-                    }}
+                    onDelete={() =>
+                      deleteComment({
+                        commentId: comment.id,
+                      })
+                    }
                   />
                 </div>
               )}
@@ -83,39 +102,16 @@ export const Comment = ({
             />
           ) : (
             <>
-              <div className="mt-1 text-sm text-gray-800">
-                {comment.content}
-              </div>
-
-              <div className="mt-2 flex items-center gap-2">
-                <button
-                  onClick={() => setIsReplying(true)}
-                  className="flex cursor-pointer items-center gap-1 rounded-md px-2 py-1 text-xs text-gray-700 transition-colors duration-100 hover:bg-red-100"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="h-3 w-3 -rotate-90"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M15 15l-6 6m0 0l-6-6m6 6V9a6 6 0 0112 0v3"
-                    />
-                  </svg>
-                  <span>Reply</span>
-                </button>
-                {session?.user.id === comment.authorId && (
+              <p className="mt-1 text-sm text-gray-800">
+                {comment.content ?? (
+                  <span className="italic">This comment was deleted.</span>
+                )}
+              </p>
+              {!!comment.author && (
+                <div className="mt-2 flex items-center gap-2">
                   <button
-                    onClick={() =>
-                      deleteComment({
-                        commentId: comment.id,
-                      })
-                    }
-                    className="flex cursor-pointer items-center gap-1 rounded-md px-2 py-1 text-xs text-gray-700 transition-colors duration-100 hover:bg-red-500 hover:text-white"
+                    onClick={() => setIsReplying(true)}
+                    className="flex cursor-pointer items-center gap-1 rounded-md px-2 py-1 text-xs text-gray-700 transition-colors duration-100 hover:bg-red-100"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -123,19 +119,18 @@ export const Comment = ({
                       viewBox="0 0 24 24"
                       strokeWidth={1.5}
                       stroke="currentColor"
-                      className="h-3 w-3"
+                      className="h-3 w-3 -rotate-90"
                     >
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                        d="M15 15l-6 6m0 0l-6-6m6 6V9a6 6 0 0112 0v3"
                       />
                     </svg>
-
-                    <span>Delete</span>
+                    <span>Reply</span>
                   </button>
-                )}
-              </div>
+                </div>
+              )}
             </>
           )}
           <FadeIn show={isReplying}>
