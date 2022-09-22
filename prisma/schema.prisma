@@ -52,6 +52,9 @@ model User {
   comments     Comment[]
   postLikes    PostLike[]
   commentLikes CommentLike[]
+
+  username    String
+  isOnboarded Boolean @default(false)
 }
 
 model VerificationToken {

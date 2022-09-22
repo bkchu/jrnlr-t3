@@ -49,13 +49,13 @@ export const Post = ({ post }: { post: PostGetPostResponse }) => {
               <Image
                 className="rounded-full"
                 src={post.author.image ?? ""}
-                alt={post.author.name ?? ""}
+                alt={post.author.username ?? ""}
                 width={32}
                 height={32}
               />
             </div>
 
-            <p className="text-sm font-semibold">{post.author.name}</p>
+            <p className="text-sm font-semibold">{post.author.username}</p>
 
             {/* the little dot */}
             <span className="mx-2 inline-block h-1 w-1 rounded-full bg-gray-500"></span>

@@ -46,7 +46,7 @@ export const AddCommentForm = ({
         <Image
           className="h-8 w-8 rounded-full object-cover"
           src={session?.user.image ?? ""}
-          alt={session?.user.name ?? ""}
+          alt={session?.user.username ?? ""}
           width={32}
           height={32}
         />
@@ -56,7 +56,7 @@ export const AddCommentForm = ({
           htmlFor="comment"
           className="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-400"
         >
-          {session?.user.name}
+          {session?.user.username}
         </label>
         <textarea
           id="comment"

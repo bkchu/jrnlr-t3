@@ -20,7 +20,7 @@ export const unauthenticatedCommentRouter = createRouter().query(
         include: {
           author: {
             select: {
-              name: true,
+              username: true,
               image: true,
             },
           },

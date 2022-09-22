@@ -42,7 +42,7 @@ export const Comment = ({
           <Image
             src={comment.author.image ?? ""}
             className="h-8 w-8 rounded-full object-cover"
-            alt={comment.author.name ?? ""}
+            alt={comment.author.username ?? ""}
             width={32}
             height={32}
           />
@@ -63,7 +63,7 @@ export const Comment = ({
         )}
         <div className="ml-3 flex-1">
           <div className="">
-            <p className="text-sm font-semibold">{comment.author?.name}</p>
+            <p className="text-sm font-semibold">{comment.author?.username}</p>
 
             <div className="flex items-center">
               {/* the little dot */}

@@ -15,7 +15,7 @@ const unauthenticatedPostRouter = createRouter()
           author: {
             select: {
               image: true,
-              name: true,
+              username: true,
             },
           },
           // only gets the information for my own like, even if there are more likes
@@ -56,7 +56,7 @@ const unauthenticatedPostRouter = createRouter()
           author: {
             select: {
               image: true,
-              name: true,
+              username: true,
             },
           },
           likes: true,
