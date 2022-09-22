@@ -14,7 +14,9 @@ type PostGetPostResponse = inferQueryOutput<"post.get-post">;
 export const Post = ({ post }: { post: PostGetPostResponse }) => {
   const utils = trpc.useContext();
   const invalidatePost = () => utils.invalidateQueries(["post.get-post"]);
-  const { data: session } = trpc.useQuery(["auth.getSession"]);
+  const { data: session } = trpc.useQuery(["auth.getSession"], {
+    enabled: false,
+  });
 
   const [growStyle, growTrigger] = useGrowBoop();
 
@@ -81,7 +83,7 @@ export const Post = ({ post }: { post: PostGetPostResponse }) => {
                 "mt-8 mb-2 inline-block rounded-full py-1 px-2 text-xs font-bold uppercase",
                 {
                   "bg-gray-200": !post.isPublished,
-                  "bg-red-200": post.isPublished,
+                  "bg-rose-200": post.isPublished,
                 }
               )}
             >
@@ -106,7 +108,7 @@ export const Post = ({ post }: { post: PostGetPostResponse }) => {
           stroke="currentColor"
           style={growStyle}
           className={clsx("h-6 w-6 duration-75", {
-            "fill-red-400 stroke-red-500": post.liked,
+            "fill-rose-400 stroke-rose-500": post.liked,
           })}
         >
           <path

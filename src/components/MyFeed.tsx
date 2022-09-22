@@ -28,7 +28,9 @@ export const MyFeedPost = ({
   const invalidateFeedPost = () =>
     utils.invalidateQueries(["post.get-posts.feed"]);
 
-  const { data: session } = trpc.useQuery(["auth.getSession"]);
+  const { data: session } = trpc.useQuery(["auth.getSession"], {
+    enabled: false,
+  });
 
   const { mutate: like } = trpc.useMutation("post.like", {
     onSuccess: invalidateFeedPost,
@@ -94,7 +96,7 @@ export const MyFeedPost = ({
       <div>
         <div className="prose mb-4">
           <Link href={`/post/${post.id}`}>
-            <h2 className="cursor-pointer transition-colors duration-75 hover:text-red-400">
+            <h2 className="cursor-pointer transition-colors duration-75 hover:text-rose-400">
               {post.title}
             </h2>
           </Link>
@@ -112,7 +114,7 @@ export const MyFeedPost = ({
               stroke="currentColor"
               style={growStyle}
               className={clsx("h-6 w-6 duration-75", {
-                "fill-red-400 stroke-red-500": post.liked,
+                "fill-rose-400 stroke-rose-500": post.liked,
               })}
             >
               <path

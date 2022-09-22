@@ -16,10 +16,12 @@ export const Comment = ({
     inferQueryOutput<"comment.get-comments-by-post-id">["roots"]
   >;
 }) => {
+  const utils = trpc.useContext();
   const [isReplying, setIsReplying] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const { data: session } = trpc.useQuery(["auth.getSession"]);
-  const utils = trpc.useContext();
+  const { data: session } = trpc.useQuery(["auth.getSession"], {
+    enabled: false,
+  });
 
   const { mutate: deleteComment } = trpc.useMutation("comment.delete", {
     onSuccess() {
@@ -31,7 +33,7 @@ export const Comment = ({
     <div className="relative isolate pt-4">
       {/* left line */}
       {comment.children.length > 0 && (
-        <div className="absolute top-[52px] bottom-0 ml-[15px] border-l-2 border-l-red-100"></div>
+        <div className="absolute top-[52px] bottom-0 ml-[15px] border-l-2 border-l-rose-100"></div>
       )}
 
       {/* actual comment */}
@@ -111,7 +113,7 @@ export const Comment = ({
                 <div className="mt-2 flex items-center gap-2">
                   <button
                     onClick={() => setIsReplying(true)}
-                    className="flex cursor-pointer items-center gap-1 rounded-md px-2 py-1 text-xs text-gray-700 transition-colors duration-100 hover:bg-red-100"
+                    className="flex cursor-pointer items-center gap-1 rounded-md px-2 py-1 text-xs text-gray-700 transition-colors duration-100 hover:bg-rose-100"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"

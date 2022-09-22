@@ -1,9 +1,11 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import { createRouter } from "./context";
 import { createProtectedRouter } from "./protected-router";
 
-export const commentRouter = createProtectedRouter()
-  .query("get-comments-by-post-id", {
+export const unauthenticatedCommentRouter = createRouter().query(
+  "get-comments-by-post-id",
+  {
     input: z.object({
       postId: z.string(),
     }),
@@ -57,7 +59,10 @@ export const commentRouter = createProtectedRouter()
 
       return { roots, count: comments.length };
     },
-  })
+  }
+);
+
+export const authenticatedCommentRouter = createProtectedRouter()
   .mutation("add-comment", {
     input: z.object({
       postId: z.string(),
@@ -133,3 +138,7 @@ export const commentRouter = createProtectedRouter()
       return updated;
     },
   });
+
+export const commentRouter = unauthenticatedCommentRouter.merge(
+  authenticatedCommentRouter
+);

@@ -67,6 +67,7 @@ model Post {
   title       String
   content     String  @db.MediumText
   isPublished Boolean @default(false)
+  isPrivate   Boolean @default(false)
 
   author   User   @relation(fields: [authorId], references: [id])
   authorId String

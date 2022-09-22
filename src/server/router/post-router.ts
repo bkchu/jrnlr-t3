@@ -1,29 +1,15 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import { createRouter } from "./context";
 import { createProtectedRouter } from "./protected-router";
 
-export const postRouter = createProtectedRouter()
-  .query("get-posts.my-posts", {
-    async resolve({ ctx }) {
-      const myPosts = await ctx.prisma.post.findMany({
-        where: {
-          author: {
-            id: ctx.session.user.id,
-          },
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-      });
-
-      return myPosts;
-    },
-  })
+const unauthenticatedPostRouter = createRouter()
   .query("get-posts.feed", {
     async resolve({ ctx }) {
       const posts = await ctx.prisma.post.findMany({
         where: {
           isPublished: true,
+          isPrivate: false,
         },
         include: {
           author: {
@@ -33,11 +19,7 @@ export const postRouter = createProtectedRouter()
             },
           },
           // only gets the information for my own like, even if there are more likes
-          likes: {
-            where: {
-              userId: ctx.session.user.id,
-            },
-          },
+          likes: true,
           _count: {
             select: {
               comments: true,
@@ -54,7 +36,10 @@ export const postRouter = createProtectedRouter()
       // put a simple boolean 'liked'
       return posts.map((post) => ({
         ...post,
-        liked: post.likes.length > 0,
+        liked:
+          ctx.session && ctx.session.user
+            ? post.likes.find((like) => like.userId === ctx.session?.user?.id)
+            : false,
       }));
     },
   })
@@ -74,11 +59,7 @@ export const postRouter = createProtectedRouter()
               name: true,
             },
           },
-          likes: {
-            where: {
-              userId: ctx.session.user.id,
-            },
-          },
+          likes: true,
           _count: {
             select: {
               comments: true,
@@ -88,7 +69,31 @@ export const postRouter = createProtectedRouter()
         },
       });
 
-      return { ...post, liked: post.likes.length > 0 };
+      return {
+        ...post,
+        liked:
+          ctx.session && ctx.session.user
+            ? post.likes.find((like) => like.userId === ctx.session?.user?.id)
+            : false,
+      };
+    },
+  });
+
+const authenticatedPostRouter = createProtectedRouter()
+  .query("get-posts.my-posts", {
+    async resolve({ ctx }) {
+      const myPosts = await ctx.prisma.post.findMany({
+        where: {
+          author: {
+            id: ctx.session.user.id,
+          },
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
+
+      return myPosts;
     },
   })
   .mutation("publish", {
@@ -270,3 +275,7 @@ export const postRouter = createProtectedRouter()
       return unliked;
     },
   });
+
+export const postRouter = unauthenticatedPostRouter.merge(
+  authenticatedPostRouter
+);

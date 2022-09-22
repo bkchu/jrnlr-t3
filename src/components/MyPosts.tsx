@@ -27,7 +27,7 @@ export const MyPost = ({ post }: { post: Post }) => {
               "inline-block rounded-full py-1 px-2 text-xs font-bold uppercase",
               {
                 "bg-gray-200": !post.isPublished,
-                "bg-red-200": post.isPublished,
+                "bg-rose-200": post.isPublished,
               }
             )}
           >
@@ -54,7 +54,7 @@ export const MyPost = ({ post }: { post: Post }) => {
       </div>
       <Link href={`/post/${post.id}`}>
         <div className="prose">
-          <h2 className="group-hover:text-red-400">{post.title}</h2>
+          <h2 className="group-hover:text-rose-400">{post.title}</h2>
         </div>
       </Link>
     </div>

@@ -1,3 +1,5 @@
+import { signIn } from "next-auth/react";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { trpc } from "../../utils/trpc";
 import { AddCommentForm } from "./AddCommentForm";
@@ -6,6 +8,11 @@ import { Comments } from "./Comments";
 export const CommentsSection = () => {
   const router = useRouter();
   const postId = router.query.postId as string;
+
+  const { data: session } = trpc.useQuery(["auth.getSession"], {
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
 
   const { data: comments } = trpc.useQuery([
     "comment.get-comments-by-post-id",
@@ -16,7 +23,25 @@ export const CommentsSection = () => {
 
   return (
     <>
-      <AddCommentForm />
+      {session?.user.id ? (
+        <AddCommentForm />
+      ) : (
+        <div
+          id="alert-additional-content-1"
+          className="my-4 rounded-lg border border-rose-300 bg-rose-50 p-4 dark:bg-rose-300"
+          role="alert"
+        >
+          <div className="text-sm text-rose-600">
+            <button
+              className="text-rose-700 underline"
+              onClick={() => signIn("google")}
+            >
+              Sign in
+            </button>{" "}
+            to leave comments!
+          </div>
+        </div>
+      )}
       <h2 className="text-md mt-4">Comments ({comments?.count})</h2>
       <div className="pb-4">
         <Comments comments={comments?.roots ?? []} />

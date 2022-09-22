@@ -39,9 +39,9 @@ export const EditPost = ({ postId }: { postId: string }) => {
     <Layout>
       <header className="flex items-center gap-4">
         <Link href="/">
-          <button className="group flex h-8 w-8 items-center justify-center rounded-md text-white transition-colors duration-100 hover:bg-red-200 hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-opacity-75">
+          <button className="group flex h-8 w-8 items-center justify-center rounded-md text-white transition-colors duration-100 hover:bg-rose-200 hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-opacity-75">
             <TbArrowLeft
-              className="text-gray-500 transition-colors duration-100 group-hover:text-red-400"
+              className="text-gray-500 transition-colors duration-100 group-hover:text-rose-400"
               aria-hidden="true"
             />
           </button>
@@ -61,7 +61,7 @@ export const EditPost = ({ postId }: { postId: string }) => {
               type="text"
               id="title"
               placeholder="Title"
-              className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-red-500 focus:ring-red-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-red-500 dark:focus:ring-red-500"
+              className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-rose-500 focus:ring-rose-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-rose-500 dark:focus:ring-rose-500"
               onChange={(e) => setTitle(e.target.value)}
               value={title}
             />
@@ -74,7 +74,7 @@ export const EditPost = ({ postId }: { postId: string }) => {
           </label>
           <textarea
             id="content"
-            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-red-500 focus:ring-red-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-red-500 dark:focus:ring-red-500"
+            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-rose-500 focus:ring-rose-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-rose-500 dark:focus:ring-rose-500"
             rows={4}
             value={content}
             onChange={(e) => setContent(e.target.value)}
@@ -82,7 +82,7 @@ export const EditPost = ({ postId }: { postId: string }) => {
           ></textarea>
           <button
             type="submit"
-            className="my-6 rounded-full bg-red-300 px-5 py-2.5 text-center text-sm font-medium text-black hover:bg-red-400 focus:outline-none focus:ring-4 focus:ring-red-100 dark:bg-red-400 dark:hover:bg-red-500 dark:focus:ring-red-900"
+            className="my-6 rounded-full bg-rose-300 px-5 py-2.5 text-center text-sm font-medium text-black hover:bg-rose-400 focus:outline-none focus:ring-4 focus:ring-rose-100 dark:bg-rose-400 dark:hover:bg-rose-500 dark:focus:ring-rose-900"
           >
             Update Post
           </button>

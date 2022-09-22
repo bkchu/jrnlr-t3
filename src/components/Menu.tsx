@@ -40,14 +40,14 @@ export const Menu = ({
   return (
     <HeadlessUiMenu as="div" className="relative inline-block text-left">
       <div>
-        <HeadlessUiMenu.Button className="group flex h-8 w-8 items-center justify-center rounded-md text-white transition-colors duration-100 hover:bg-red-200 hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75">
+        <HeadlessUiMenu.Button className="group flex h-8 w-8 items-center justify-center rounded-md text-white transition-colors duration-100 hover:bg-rose-200 hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="h-5 w-5 text-gray-500 transition-colors duration-100 group-hover:text-red-500"
+            className="h-5 w-5 text-gray-500 transition-colors duration-100 group-hover:text-rose-500"
           >
             <path
               strokeLinecap="round"
@@ -77,7 +77,7 @@ export const Menu = ({
                       : publishPost({ postId })
                   }
                   className={`${
-                    active ? "bg-red-400 text-white" : "bg-red-200 text-black"
+                    active ? "bg-rose-400 text-white" : "bg-rose-200 text-black"
                   } group flex w-full items-center rounded-md px-2 py-2 text-sm transition-colors duration-100`}
                 >
                   {isPublished ? (
@@ -126,7 +126,7 @@ export const Menu = ({
                 <button
                   onClick={() => router.push(`/post/${postId}/edit`)}
                   className={`${
-                    active ? "bg-red-400 text-white" : "bg-white text-black"
+                    active ? "bg-rose-400 text-white" : "bg-white text-black"
                   } group flex w-full items-center rounded-md px-2 py-2 text-sm transition-colors duration-100`}
                 >
                   <svg
@@ -156,7 +156,7 @@ export const Menu = ({
                 <button
                   onClick={() => deletePost({ postId })}
                   className={`${
-                    active ? "bg-red-500 text-white" : "text-gray-900"
+                    active ? "bg-rose-500 text-white" : "text-gray-900"
                   } group flex w-full items-center rounded-md px-2 py-2 text-sm transition-colors duration-100`}
                 >
                   <svg
@@ -166,7 +166,7 @@ export const Menu = ({
                     strokeWidth={1.5}
                     stroke="currentColor"
                     className={`mr-2 h-5 w-5 ${
-                      active ? "text-white" : "text-red-400"
+                      active ? "text-white" : "text-rose-400"
                     }`}
                   >
                     <path

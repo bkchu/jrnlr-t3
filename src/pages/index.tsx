@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import type { NextPage } from "next";
-import { signIn } from "next-auth/react";
+import { signIn, signOut } from "next-auth/react";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
@@ -11,13 +11,13 @@ import { MyPosts } from "../components/MyPosts";
 import { trpc } from "../utils/trpc";
 
 const Home: NextPage = () => {
-  const {
-    isLoading,
-    isFetching,
-    data: session,
-  } = trpc.useQuery(["auth.getSession"]);
+  const { isLoading, data: session } = trpc.useQuery(["auth.getSession"], {
+    retry: 1,
+  });
 
-  const [isMyPosts, setIsMyPosts] = useState(false);
+  const [isMyPosts, setIsMyPosts] = useState(
+    () => !isLoading && !session?.user.id
+  );
 
   const { isLoading: isLoadingMyPosts, data: myPosts } = trpc.useQuery(
     ["post.get-posts.my-posts"],
@@ -33,7 +33,7 @@ const Home: NextPage = () => {
     }
   );
 
-  const activeTabStyle = "bg-red-200 font-bold";
+  const activeTabStyle = "bg-rose-200 font-bold";
 
   return (
     <>
@@ -46,8 +46,8 @@ const Home: NextPage = () => {
       <Layout>
         <header>
           {!!session ? (
-            <div className="flex items-center">
-              <div className="mr-3 h-12">
+            <div className="flex items-center gap-3">
+              <div className="h-12">
                 <Image
                   className="rounded-full"
                   src={session?.user?.image ?? ""}
@@ -57,35 +57,38 @@ const Home: NextPage = () => {
                 />
               </div>
               <p className="text-2xl font-bold leading-none">Home</p>
+              <button onClick={() => signOut()} className="text-xs">
+                Sign Out
+              </button>
               {/* <button onClick={() => signOut()}>Sign Out</button> */}
             </div>
-          ) : isLoading && isFetching ? (
-            "loading..."
           ) : (
             <button onClick={() => signIn("google")}>Sign In</button>
           )}
         </header>
 
-        <nav className="mt-5 flex rounded-[10px] border border-red-200 p-px">
-          <button
-            className={clsx(
-              "h-8 flex-1 rounded-lg text-gray-800",
-              !isMyPosts && activeTabStyle
-            )}
-            onClick={() => setIsMyPosts(false)}
-          >
-            Feed
-          </button>
-          <button
-            className={clsx(
-              "h-8 flex-1 rounded-lg text-gray-800",
-              isMyPosts && activeTabStyle
-            )}
-            onClick={() => setIsMyPosts(true)}
-          >
-            My Posts
-          </button>
-        </nav>
+        {session?.user.id && (
+          <nav className="mt-5 flex rounded-[10px] border border-rose-200 p-px">
+            <button
+              className={clsx(
+                "h-8 flex-1 rounded-lg text-gray-800",
+                !isMyPosts && activeTabStyle
+              )}
+              onClick={() => setIsMyPosts(false)}
+            >
+              Feed
+            </button>
+            <button
+              className={clsx(
+                "h-8 flex-1 rounded-lg text-gray-800",
+                isMyPosts && activeTabStyle
+              )}
+              onClick={() => setIsMyPosts(true)}
+            >
+              My Posts
+            </button>
+          </nav>
+        )}
 
         <main className="container mx-auto mt-4">
           {isLoadingMyPosts || isLoadingFeed ? (
@@ -98,7 +101,7 @@ const Home: NextPage = () => {
         </main>
 
         <Link href="/create">
-          <button className="fixed bottom-5 right-5 flex h-12 w-12 items-center justify-center rounded-full bg-red-200 text-black">
+          <button className="fixed bottom-5 right-5 flex h-12 w-12 items-center justify-center rounded-full bg-rose-200 text-black">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
