@@ -64,15 +64,15 @@ export const Comment = ({
   });
 
   const borderDepthColorMap = clsx({
-    "border-red-400 ": depth % 9 === 1,
-    "border-orange-400 ": depth % 9 === 2,
-    "border-yellow-400 ": depth % 9 === 3,
-    "border-green-400 ": depth % 9 === 4,
-    "border-sky-400 ": depth % 9 === 5,
-    "border-indigo-400 ": depth % 9 === 6,
-    "border-purple-400 ": depth % 9 === 7,
-    "border-pink-400 ": depth % 9 === 8,
-    "border-rose-600 ": depth % 9 === 0,
+    "border-rose-100": depth % 9 === 1,
+    "border-rose-200": depth % 9 === 2,
+    "border-rose-300": depth % 9 === 3,
+    "border-rose-400": depth % 9 === 4,
+    "border-rose-500": depth % 9 === 5,
+    "border-rose-600": depth % 9 === 6,
+    "border-rose-700": depth % 9 === 7,
+    "border-rose-800": depth % 9 === 8,
+    "border-rose-900": depth % 9 === 0,
   });
 
   return (
