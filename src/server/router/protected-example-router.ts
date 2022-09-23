@@ -17,6 +17,9 @@ export const protectedExampleRouter = createProtectedRouter()
           ...ctx.session.user,
           isOnboarded: user.isOnboarded,
           username: user.username,
+          givenName: user.givenName,
+          familyName: user.familyName,
+          locale: user.locale,
         },
       };
     },

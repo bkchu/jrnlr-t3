@@ -22,8 +22,24 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
+      profile(profile) {
+        // console.log(profile)
+        // the keys in this returned object correspond to columns in the Users table
+        return {
+          name: profile.name,
+          givenName: profile.given_name,
+          familyName: profile.family_name,
+          locale: profile.locale,
+          id: profile.sub,
+          email: profile.email,
+          image: profile.picture,
+
+          // set the username to the email on user creation
+          // which will be updated in the onboarding flow
+          username: profile.email,
+        };
+      },
     }),
-    // ...add more providers here
   ],
 };
 

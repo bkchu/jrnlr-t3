@@ -71,7 +71,7 @@ const Home: NextPage = () => {
                 height={48}
               />
             </div>
-            <p className="text-2xl font-bold leading-none">Home</p>
+            <p className="text-xl">Hey, {session?.user?.givenName}</p>
             <button onClick={() => signOut()} className="text-xs">
               Sign Out
             </button>
