@@ -24,17 +24,34 @@ export const unauthenticatedCommentRouter = createRouter().query(
               image: true,
             },
           },
+          likes: true,
+          _count: {
+            select: {
+              // this will still get the count of all of the likes
+              likes: true,
+            },
+          },
         },
       });
 
-      type CommentWithChildren = ArrayElement<typeof comments> & {
+      const commentsWithLiked = comments.map((comment) => ({
+        ...comment,
+        liked:
+          ctx.session && ctx.session.user
+            ? comment.likes.find(
+                (like) => like.userId === ctx.session?.user?.id
+              )
+            : false,
+      }));
+
+      type CommentWithChildren = ArrayElement<typeof commentsWithLiked> & {
         children: Array<CommentWithChildren>;
       };
 
       const roots: Array<CommentWithChildren> = [];
       const mapCommentIdToIndex = new Map<string, number>();
 
-      comments.forEach((comment, i) => {
+      commentsWithLiked.forEach((comment, i) => {
         mapCommentIdToIndex.set(comment.id, i);
 
         const commentWithChildren = comment as CommentWithChildren;
@@ -49,15 +66,15 @@ export const unauthenticatedCommentRouter = createRouter().query(
             return;
           }
 
-          (comments[parentIndex] as CommentWithChildren).children?.push(
-            commentWithChildren
-          );
+          (
+            commentsWithLiked[parentIndex] as CommentWithChildren
+          ).children?.push(commentWithChildren);
         } else {
           roots.push(commentWithChildren);
         }
       });
 
-      return { roots, count: comments.length };
+      return { roots, count: commentsWithLiked.length };
     },
   }
 );
@@ -136,6 +153,59 @@ export const authenticatedCommentRouter = createProtectedRouter()
       });
 
       return updated;
+    },
+  })
+  .mutation("like", {
+    input: z.object({
+      commentId: z.string().min(1),
+    }),
+    async resolve({ ctx, input }) {
+      const like = ctx.prisma.commentLike.create({
+        data: {
+          user: {
+            connect: {
+              id: ctx.session.user.id,
+            },
+          },
+          comment: {
+            connect: {
+              id: input.commentId,
+            },
+          },
+        },
+      });
+
+      return like;
+    },
+  })
+  .mutation("unlike", {
+    input: z.object({
+      commentId: z.string().min(1),
+    }),
+    async resolve({ ctx, input }) {
+      const existingLike = await ctx.prisma.commentLike.findUniqueOrThrow({
+        where: {
+          commentId_userId: {
+            commentId: input.commentId,
+            userId: ctx.session.user.id,
+          },
+        },
+      });
+
+      if (existingLike.userId !== ctx.session.user.id) {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
+
+      const unliked = await ctx.prisma.commentLike.delete({
+        where: {
+          commentId_userId: {
+            commentId: input.commentId,
+            userId: ctx.session.user.id,
+          },
+        },
+      });
+
+      return unliked;
     },
   });
 

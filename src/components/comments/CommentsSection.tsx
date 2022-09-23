@@ -1,5 +1,4 @@
 import { signIn } from "next-auth/react";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { trpc } from "../../utils/trpc";
 import { AddCommentForm } from "./AddCommentForm";
@@ -43,7 +42,7 @@ export const CommentsSection = () => {
         </div>
       )}
       <h2 className="text-md mt-4">Comments ({comments?.count})</h2>
-      <div className="pb-4">
+      <div className="pb-4 pl-2">
         <Comments comments={comments?.roots ?? []} />
       </div>
     </>

@@ -224,7 +224,7 @@ const authenticatedPostRouter = createProtectedRouter()
   })
   .mutation("like", {
     input: z.object({
-      postId: z.string(),
+      postId: z.string().min(1),
     }),
     async resolve({ ctx, input }) {
       const like = await ctx.prisma.postLike.create({
@@ -247,7 +247,7 @@ const authenticatedPostRouter = createProtectedRouter()
   })
   .mutation("unlike", {
     input: z.object({
-      postId: z.string(),
+      postId: z.string().min(1),
     }),
     async resolve({ ctx, input }) {
       const existingLike = await ctx.prisma.postLike.findUniqueOrThrow({
