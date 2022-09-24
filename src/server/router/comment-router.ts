@@ -10,29 +10,32 @@ export const unauthenticatedCommentRouter = createRouter().query(
       postId: z.string(),
     }),
     async resolve({ ctx, input }) {
-      const comments = await ctx.prisma.comment.findMany({
-        where: {
-          postId: input.postId,
-        },
-        orderBy: {
-          createdAt: "asc",
-        },
-        include: {
-          author: {
-            select: {
-              username: true,
-              image: true,
+      const comments = await ctx.prisma.post
+        .findUnique({
+          where: {
+            id: input.postId,
+          },
+        })
+        .comments({
+          orderBy: {
+            createdAt: "asc",
+          },
+          include: {
+            author: {
+              select: {
+                username: true,
+                image: true,
+              },
+            },
+            likes: true,
+            _count: {
+              select: {
+                // this will still get the count of all of the likes
+                likes: true,
+              },
             },
           },
-          likes: true,
-          _count: {
-            select: {
-              // this will still get the count of all of the likes
-              likes: true,
-            },
-          },
-        },
-      });
+        });
 
       const commentsWithLiked = comments.map((comment) => ({
         ...comment,

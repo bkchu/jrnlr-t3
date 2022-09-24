@@ -88,23 +88,24 @@ const unauthenticatedPostRouter = createRouter()
 const authenticatedPostRouter = createProtectedRouter()
   .query("get-posts.my-posts", {
     async resolve({ ctx }) {
-      const myPosts = await ctx.prisma.post.findMany({
-        where: {
-          author: {
+      const myPosts = await ctx.prisma.user
+        .findUnique({
+          where: {
             id: ctx.session.user.id,
           },
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-        include: {
-          author: {
-            select: {
-              username: true,
+        })
+        .posts({
+          orderBy: {
+            createdAt: "desc",
+          },
+          include: {
+            author: {
+              select: {
+                username: true,
+              },
             },
           },
-        },
-      });
+        });
 
       return myPosts;
     },

@@ -8,7 +8,9 @@ type OnboardCheckProps = {
 
 export const OnboardCheck = ({ children }: OnboardCheckProps) => {
   const router = useRouter();
-  const { data: session } = trpc.useQuery(["auth.getSession"]);
+  const { data: session } = trpc.useQuery(["auth.getSession"], {
+    retry: false,
+  });
 
   useEffect(() => {
     if (session?.user?.id) {
