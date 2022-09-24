@@ -20,7 +20,7 @@ type PostGetPostResponse = inferQueryOutput<"post.get-post">;
 
 export const getServerSideProps: GetServerSideProps<{
   postId: string;
-  postAuthorUsername: string;
+  authorUsername: string;
   postSlug: string;
 }> = async ({ params, req, res }) => {
   const session = await unstable_getServerSession(req, res, authOptions);
@@ -29,12 +29,11 @@ export const getServerSideProps: GetServerSideProps<{
     ctx: { session, prisma },
     transformer: superjson, // optional - adds superjson serialization
   });
-
-  const postAuthorUsername = params?.username as string;
+  const authorUsername = params?.username as string;
   const postSlug = params?.slug as string;
 
   const post = await ssg.fetchQuery("post.get-post", {
-    postAuthorUsername,
+    authorUsername,
     postSlug,
   });
 
@@ -42,7 +41,7 @@ export const getServerSideProps: GetServerSideProps<{
     props: {
       trpcState: ssg.dehydrate(),
       postId: post.id,
-      postAuthorUsername,
+      authorUsername,
       postSlug,
     },
   };
@@ -59,7 +58,7 @@ const PostPage = (
   const { data: post, isLoading: isLoadingPost } = trpc.useQuery([
     "post.get-post",
     {
-      postAuthorUsername: props.postAuthorUsername,
+      authorUsername: props.authorUsername,
       postSlug: props.postSlug,
     },
   ]);

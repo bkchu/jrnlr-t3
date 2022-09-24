@@ -47,14 +47,14 @@ const unauthenticatedPostRouter = createRouter()
   })
   .query("get-post", {
     input: z.object({
-      postAuthorUsername: z.string().min(1),
+      authorUsername: z.string().min(1),
       postSlug: z.string().min(1),
     }),
     async resolve({ ctx, input }) {
       const post = await ctx.prisma.post.findUniqueOrThrow({
         where: {
           authorUsername_slug: {
-            authorUsername: input.postAuthorUsername,
+            authorUsername: input.authorUsername,
             slug: input.postSlug,
           },
         },
@@ -97,6 +97,13 @@ const authenticatedPostRouter = createProtectedRouter()
         orderBy: {
           createdAt: "desc",
         },
+        include: {
+          author: {
+            select: {
+              username: true,
+            },
+          },
+        },
       });
 
       return myPosts;
@@ -113,7 +120,7 @@ const authenticatedPostRouter = createProtectedRouter()
         },
       });
 
-      if (post.authorId !== ctx.session.user.id) {
+      if (post.authorUsername !== ctx.session.user.username) {
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
 
@@ -138,7 +145,7 @@ const authenticatedPostRouter = createProtectedRouter()
         },
       });
 
-      if (post.authorId !== ctx.session.user.id) {
+      if (post.authorUsername !== ctx.session.user.username) {
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
 
@@ -205,7 +212,7 @@ const authenticatedPostRouter = createProtectedRouter()
         },
       });
 
-      if (postToEdit.authorId !== ctx.session.user.id) {
+      if (postToEdit.authorUsername !== ctx.session.user.username) {
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
 
@@ -234,7 +241,7 @@ const authenticatedPostRouter = createProtectedRouter()
         },
       });
 
-      if (postToDelete.authorId !== ctx.session.user.id) {
+      if (postToDelete.authorUsername !== ctx.session.user.username) {
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
 

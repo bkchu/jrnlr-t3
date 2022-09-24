@@ -82,7 +82,7 @@ export const MyFeedPost = ({
           </span>
         </div>
 
-        {session?.user.id === post.authorId && (
+        {session?.user.username === post.authorUsername && (
           <div className="absolute top-0 right-0">
             <Menu
               isPublished={post.isPublished}

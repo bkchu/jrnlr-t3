@@ -18,7 +18,7 @@ const Edit = () => {
     [
       "post.get-post",
       {
-        postAuthorUsername: router.query.username as string,
+        authorUsername: router.query.username as string,
         postSlug: router.query.slug as string,
       },
     ],

@@ -16,7 +16,6 @@ const createPostSchema = z.object({
 });
 
 type CreatePostSchemaType = z.infer<typeof createPostSchema>;
-
 const Create = () => {
   const queryClient = useQueryClient();
   const router = useRouter();

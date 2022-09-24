@@ -74,12 +74,12 @@ model Post {
   id          String  @id @default(cuid())
   title       String  @db.VarChar(300)
   content     String  @db.MediumText
+  slug        String  @default("")
   isPublished Boolean @default(false)
   isPrivate   Boolean @default(false)
 
-  author         User   @relation(fields: [authorId, authorUsername], references: [id, username])
-  authorId       String
-  authorUsername String
+  author         User   @relation(fields: [authorUsername], references: [username])
+  authorUsername String @default("")
 
   comments Comment[]
 
@@ -88,10 +88,8 @@ model Post {
 
   likes PostLike[]
 
-  slug String
-
   @@unique([authorUsername, slug])
-  @@index([authorId])
+  @@index([authorUsername])
 }
 
 model Comment {

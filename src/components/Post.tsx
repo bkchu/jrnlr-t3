@@ -67,7 +67,7 @@ export const Post = ({ post }: { post: PostGetPostResponse }) => {
               {getDurationSinceDate(post.createdAt)}
             </span>
           </div>
-          {session?.user.id === post.authorId && (
+          {session?.user.username === post.authorUsername && (
             <Menu
               isPublished={post.isPublished}
               postId={post.id}
@@ -82,7 +82,7 @@ export const Post = ({ post }: { post: PostGetPostResponse }) => {
         </div>
 
         <article className="prose lg:prose-xl">
-          {session?.user.id === post.authorId && (
+          {session?.user.username === post.authorUsername && (
             <span
               className={clsx(
                 "mt-8 mb-2 inline-block rounded-full py-1 px-2 text-xs font-bold uppercase",
