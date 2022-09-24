@@ -169,7 +169,7 @@ export const Comment = ({
                 <div className="mt-2 flex items-center gap-2">
                   <button
                     onClick={toggleLike}
-                    className="flex cursor-pointer items-center gap-1 rounded-md px-2 py-1 text-sm text-gray-700 transition-colors duration-100 hover:bg-rose-100"
+                    className="flex cursor-pointer items-center gap-1 rounded-md bg-rose-50 px-2 py-1 text-sm text-gray-700 transition-colors duration-100 hover:bg-rose-100"
                   >
                     <animated.svg
                       xmlns="http://www.w3.org/2000/svg"

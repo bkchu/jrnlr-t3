@@ -1,11 +1,11 @@
 import { Menu as HeadlessUiMenu, Transition } from "@headlessui/react";
-import { useRouter } from "next/router";
 import { Fragment } from "react";
 import { trpc } from "../utils/trpc";
 
 type MenuProps = {
   postId: string;
   isPublished: boolean;
+  onEdit?: () => void;
   onPublish?: () => void;
   onUnpublish?: () => void;
   onDelete?: () => void;
@@ -14,12 +14,11 @@ type MenuProps = {
 export const Menu = ({
   postId,
   isPublished,
+  onEdit,
   onPublish,
   onUnpublish,
   onDelete,
 }: MenuProps) => {
-  const router = useRouter();
-
   const { mutateAsync: publishPost } = trpc.useMutation("post.publish", {
     onSuccess: () => {
       onPublish?.();
@@ -124,7 +123,7 @@ export const Menu = ({
             <HeadlessUiMenu.Item>
               {({ active }) => (
                 <button
-                  onClick={() => router.push(`/post/${postId}/edit`)}
+                  onClick={onEdit}
                   className={`${
                     active ? "bg-rose-400 text-white" : "bg-white text-black"
                   } group flex w-full items-center rounded-md px-2 py-2 text-sm transition-colors duration-100`}

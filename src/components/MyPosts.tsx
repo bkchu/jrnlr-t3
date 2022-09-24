@@ -1,6 +1,7 @@
 import { Post } from "@prisma/client";
 import clsx from "clsx";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { getDurationSinceDate } from "../utils/date";
 import { trpc } from "../utils/trpc";
 import { Menu } from "./Menu";
@@ -14,6 +15,7 @@ export const MyPosts = ({ posts }: { posts: Post[] }) => (
 );
 
 export const MyPost = ({ post }: { post: Post }) => {
+  const router = useRouter();
   const utils = trpc.useContext();
   const invalidatePost = () =>
     utils.invalidateQueries(["post.get-posts.my-posts"]);
@@ -46,13 +48,16 @@ export const MyPost = ({ post }: { post: Post }) => {
           <Menu
             isPublished={post.isPublished}
             postId={post.id}
+            onEdit={() =>
+              router.push(`/${post.authorUsername}/${post.slug}/edit`)
+            }
             onPublish={invalidatePost}
             onUnpublish={invalidatePost}
             onDelete={invalidatePost}
           />
         </div>
       </div>
-      <Link href={`/post/${post.id}`}>
+      <Link href={`/${post.authorUsername}/${post.slug}`}>
         <div className="prose">
           <h2 className="group-hover:text-rose-400">{post.title}</h2>
         </div>

@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import pluralize from "pluralize";
 import { animated } from "react-spring";
 import { useGrowBoop } from "../hooks/useBoop";
@@ -23,6 +24,7 @@ export const MyFeedPost = ({
 }: {
   post: ArrayElement<PostGetPostsResponse>;
 }) => {
+  const router = useRouter();
   const utils = trpc.useContext();
 
   const invalidateFeedPost = () =>
@@ -85,6 +87,9 @@ export const MyFeedPost = ({
             <Menu
               isPublished={post.isPublished}
               postId={post.id}
+              onEdit={() =>
+                router.push(`/${post.authorUsername}/${post.slug}/edit`)
+              }
               onPublish={invalidateFeedPost}
               onUnpublish={invalidateFeedPost}
               onDelete={invalidateFeedPost}
@@ -95,7 +100,7 @@ export const MyFeedPost = ({
 
       <div>
         <div className="prose mb-4">
-          <Link href={`/post/${post.id}`}>
+          <Link href={`/${post.authorUsername}/${post.slug}`}>
             <h2 className="cursor-pointer transition-colors duration-75 hover:text-rose-400">
               {post.title}
             </h2>
@@ -128,7 +133,7 @@ export const MyFeedPost = ({
               {pluralize("like", post._count.likes, true)}
             </p>
           </button>
-          <Link href={`/post/${post.id}`}>
+          <Link href={`/${post.authorUsername}/${post.slug}`}>
             <div className="mt-2 flex cursor-pointer items-center gap-1 text-gray-700">
               <svg
                 xmlns="http://www.w3.org/2000/svg"

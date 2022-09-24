@@ -1,6 +1,6 @@
 import Image from "next/future/image";
-import { useRouter } from "next/router";
 import { FormEventHandler, useState } from "react";
+import { usePostContext } from "../../contexts/PostContext";
 import { trpc } from "../../utils/trpc";
 import { FadeIn } from "../FadeIn";
 
@@ -15,10 +15,9 @@ export const AddCommentForm = ({
   onClose,
   parentId,
 }: AddCommentFormProps) => {
+  const { postId } = usePostContext();
   const [comment, setComment] = useState("");
   const utils = trpc.useContext();
-  const router = useRouter();
-  const postId = router.query.postId as string;
   const { data: session } = trpc.useQuery(["auth.getSession"], {
     enabled: false,
   });

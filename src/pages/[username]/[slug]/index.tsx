@@ -10,6 +10,7 @@ import { CommentsSection } from "../../../components/comments/CommentsSection";
 import { Layout } from "../../../components/Layout";
 import { Post } from "../../../components/Post";
 import { PostLoader } from "../../../components/PostLoader";
+import { PostProvider } from "../../../contexts/PostContext";
 import { prisma } from "../../../server/db/client";
 import { appRouter } from "../../../server/router";
 import { inferQueryOutput, trpc } from "../../../utils/trpc";
@@ -19,6 +20,8 @@ type PostGetPostResponse = inferQueryOutput<"post.get-post">;
 
 export const getServerSideProps: GetServerSideProps<{
   postId: string;
+  postAuthorUsername: string;
+  postSlug: string;
 }> = async ({ params, req, res }) => {
   const session = await unstable_getServerSession(req, res, authOptions);
   const ssg = createSSGHelpers({
@@ -27,16 +30,20 @@ export const getServerSideProps: GetServerSideProps<{
     transformer: superjson, // optional - adds superjson serialization
   });
 
-  const postId = params?.postId as string;
+  const postAuthorUsername = params?.username as string;
+  const postSlug = params?.slug as string;
 
-  await ssg.fetchQuery("post.get-post", {
-    postId,
+  const post = await ssg.fetchQuery("post.get-post", {
+    postAuthorUsername,
+    postSlug,
   });
 
   return {
     props: {
       trpcState: ssg.dehydrate(),
-      postId,
+      postId: post.id,
+      postAuthorUsername,
+      postSlug,
     },
   };
 };
@@ -51,16 +58,21 @@ const PostPage = (
 
   const { data: post, isLoading: isLoadingPost } = trpc.useQuery([
     "post.get-post",
-    { postId: props.postId },
+    {
+      postAuthorUsername: props.postAuthorUsername,
+      postSlug: props.postSlug,
+    },
   ]);
 
   const { isLoading: isLoadingComments } = trpc.useQuery([
     "comment.get-comments-by-post-id",
-    { postId: props.postId },
+    {
+      postId: props.postId,
+    },
   ]);
 
   return (
-    <>
+    <PostProvider initialPostId={props.postId}>
       <Head>
         <title>{post?.title ? `${post.title} - ` : ""}Jrnlr</title>
       </Head>
@@ -108,7 +120,7 @@ const PostPage = (
 
         {isLoadingComments ? <CommentLoader /> : <CommentsSection />}
       </Layout>
-    </>
+    </PostProvider>
   );
 };
 

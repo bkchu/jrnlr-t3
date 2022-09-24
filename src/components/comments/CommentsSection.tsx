@@ -1,13 +1,11 @@
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/router";
+import { usePostContext } from "../../contexts/PostContext";
 import { trpc } from "../../utils/trpc";
 import { AddCommentForm } from "./AddCommentForm";
 import { Comments } from "./Comments";
 
 export const CommentsSection = () => {
-  const router = useRouter();
-  const postId = router.query.postId as string;
-
+  const { postId } = usePostContext();
   const { data: session } = trpc.useQuery(["auth.getSession"], {
     retry: false,
     refetchOnWindowFocus: false,

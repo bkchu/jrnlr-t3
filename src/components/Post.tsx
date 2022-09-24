@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import Image from "next/future/image";
+import { useRouter } from "next/router";
 import pluralize from "pluralize";
 import ReactMarkdown from "react-markdown";
 import { animated } from "react-spring";
@@ -12,6 +13,7 @@ import { Menu } from "./Menu";
 type PostGetPostResponse = inferQueryOutput<"post.get-post">;
 
 export const Post = ({ post }: { post: PostGetPostResponse }) => {
+  const router = useRouter();
   const utils = trpc.useContext();
   const invalidatePost = () => utils.invalidateQueries(["post.get-post"]);
   const { data: session } = trpc.useQuery(["auth.getSession"], {
@@ -69,6 +71,9 @@ export const Post = ({ post }: { post: PostGetPostResponse }) => {
             <Menu
               isPublished={post.isPublished}
               postId={post.id}
+              onEdit={() =>
+                router.push(`/${post.authorUsername}/${post.slug}/edit`)
+              }
               onPublish={invalidatePost}
               onUnpublish={invalidatePost}
               onDelete={invalidatePost}

@@ -1,4 +1,6 @@
+import { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
+import slugify from "slugify";
 import { z } from "zod";
 import { createRouter } from "./context";
 import { createProtectedRouter } from "./protected-router";
@@ -45,12 +47,16 @@ const unauthenticatedPostRouter = createRouter()
   })
   .query("get-post", {
     input: z.object({
-      postId: z.string(),
+      postAuthorUsername: z.string().min(1),
+      postSlug: z.string().min(1),
     }),
     async resolve({ ctx, input }) {
       const post = await ctx.prisma.post.findUniqueOrThrow({
         where: {
-          id: input.postId,
+          authorUsername_slug: {
+            authorUsername: input.postAuthorUsername,
+            slug: input.postSlug,
+          },
         },
         include: {
           author: {
@@ -148,25 +154,42 @@ const authenticatedPostRouter = createProtectedRouter()
   })
   .mutation("create", {
     input: z.object({
-      title: z.string().min(1),
+      title: z.string().min(1).max(300),
       content: z.string().min(1),
       shouldPublishImmediately: z.boolean().default(false),
     }),
     async resolve({ ctx, input }) {
-      const newPost = await ctx.prisma.post.create({
-        data: {
-          content: input.content,
-          title: input.title,
-          isPublished: input.shouldPublishImmediately,
-          author: {
-            connect: {
-              id: ctx.session.user.id,
+      try {
+        const newPost = await ctx.prisma.post.create({
+          data: {
+            content: input.content,
+            title: input.title,
+            slug: slugify(input.title, {
+              lower: true, // convert to lower case, defaults to `false`
+              strict: true, // strip special characters except replacement, defaults to `false`
+              trim: true, // trim leading and trailing replacement chars, defaults to `true`
+            }),
+            isPublished: input.shouldPublishImmediately,
+            author: {
+              connect: {
+                id: ctx.session.user.id,
+              },
             },
           },
-        },
-      });
+        });
 
-      return { id: newPost.id };
+        return newPost;
+      } catch (e) {
+        if (e instanceof Prisma.PrismaClientKnownRequestError) {
+          if (e.code === "P2002") {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: "Please use a unique title.",
+              cause: e.meta,
+            });
+          }
+        }
+      }
     },
   })
   .mutation("edit", {

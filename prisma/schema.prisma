@@ -56,8 +56,10 @@ model User {
   postLikes    PostLike[]
   commentLikes CommentLike[]
 
-  username    String
+  username    String  @unique
   isOnboarded Boolean @default(false)
+
+  @@unique([id, username])
 }
 
 model VerificationToken {
@@ -70,13 +72,14 @@ model VerificationToken {
 
 model Post {
   id          String  @id @default(cuid())
-  title       String
+  title       String  @db.VarChar(300)
   content     String  @db.MediumText
   isPublished Boolean @default(false)
   isPrivate   Boolean @default(false)
 
-  author   User   @relation(fields: [authorId], references: [id])
-  authorId String
+  author         User   @relation(fields: [authorId, authorUsername], references: [id, username])
+  authorId       String
+  authorUsername String
 
   comments Comment[]
 
@@ -84,6 +87,11 @@ model Post {
   updatedAt DateTime @updatedAt
 
   likes PostLike[]
+
+  slug String
+
+  @@unique([authorUsername, slug])
+  @@index([authorId])
 }
 
 model Comment {
@@ -104,6 +112,8 @@ model Comment {
   updatedAt DateTime @updatedAt
 
   likes CommentLike[]
+
+  @@index([postId, authorId, parentId])
 }
 
 model PostLike {
@@ -116,6 +126,7 @@ model PostLike {
   postId String
 
   @@unique([postId, userId])
+  @@index([postId, userId])
 }
 
 model CommentLike {
@@ -128,4 +139,5 @@ model CommentLike {
   commentId String
 
   @@unique([commentId, userId])
+  @@index([commentId, userId])
 }
