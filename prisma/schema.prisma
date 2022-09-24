@@ -74,12 +74,12 @@ model Post {
   id          String  @id @default(cuid())
   title       String  @db.VarChar(300)
   content     String  @db.MediumText
-  slug        String  @default("")
+  slug        String
   isPublished Boolean @default(false)
   isPrivate   Boolean @default(false)
 
   author         User   @relation(fields: [authorUsername], references: [username])
-  authorUsername String @default("")
+  authorUsername String
 
   comments Comment[]
 
