@@ -1,5 +1,6 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+/* eslint-disable @typescript-eslint/no-var-requires */
 const defaultTheme = require("tailwindcss/defaultTheme");
+const { tailwindcssOriginSafelist } = require("@headlessui-float/react");
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -12,4 +13,5 @@ module.exports = {
     },
   },
   plugins: [require("@tailwindcss/typography")],
+  safelist: [...tailwindcssOriginSafelist],
 };

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { getDurationSinceDate } from "../utils/date";
 import { trpc } from "../utils/trpc";
-import { Menu } from "./Menu";
+import { PostMenu } from "./posts/PostMenu";
 
 export const MyPosts = ({ posts }: { posts: Post[] }) => (
   <>
@@ -45,7 +45,7 @@ export const MyPost = ({ post }: { post: Post }) => {
           </span>
         </p>
         <div className="absolute -top-1 right-0">
-          <Menu
+          <PostMenu
             isPublished={post.isPublished}
             postId={post.id}
             onEdit={() =>

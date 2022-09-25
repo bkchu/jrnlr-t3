@@ -7,7 +7,7 @@ import { animated } from "react-spring";
 import { useGrowBoop } from "../hooks/useBoop";
 import { getDurationSinceDate } from "../utils/date";
 import { inferQueryOutput, trpc } from "../utils/trpc";
-import { Menu } from "./Menu";
+import { PostMenu } from "./posts/PostMenu";
 
 type PostGetPostsResponse = inferQueryOutput<"post.get-posts.feed">;
 
@@ -58,7 +58,7 @@ export const MyFeedPost = ({
   };
 
   return (
-    <div className="my-8 rounded-xl">
+    <div className="mb-8 rounded-xl">
       <div className="relative mb-2 flex items-center justify-between">
         <div className="flex items-center">
           <div className="mr-3 h-8">
@@ -84,7 +84,7 @@ export const MyFeedPost = ({
 
         {session?.user.username === post.authorUsername && (
           <div className="absolute top-0 right-0">
-            <Menu
+            <PostMenu
               isPublished={post.isPublished}
               postId={post.id}
               onEdit={() =>
