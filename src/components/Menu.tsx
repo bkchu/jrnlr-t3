@@ -36,15 +36,14 @@ export const Menu: MenuType = ({ triggerButton, children }: MenuProps) => {
 };
 
 Menu.Button = ({ onClick, children, variant = "secondary" }) => {
-  const activeStylesMap = (active: boolean) =>
-    clsx({
-      "bg-rose-200 text-black hover:bg-rose-400 hover:text-white":
-        variant === "primary",
-      "bg-white text-black hover:bg-rose-400 hover:text-white":
-        variant === "secondary",
-      "text-gray-900 hover:bg-rose-500 hover:text-white":
-        variant === "destructive",
-    });
+  const activeStylesMap = clsx({
+    "bg-rose-200 text-black hover:bg-rose-400 hover:text-white":
+      variant === "primary",
+    "bg-white text-black hover:bg-rose-400 hover:text-white":
+      variant === "secondary",
+    "text-gray-900 hover:bg-rose-500 hover:text-white":
+      variant === "destructive",
+  });
 
   return (
     <div className="px-1 py-1">
@@ -55,7 +54,7 @@ Menu.Button = ({ onClick, children, variant = "secondary" }) => {
             onClick={onClick}
             className={clsx(
               "flex w-full items-center rounded-md px-2 py-2 text-sm transition-colors duration-100",
-              activeStylesMap(active)
+              activeStylesMap
             )}
           >
             {(children as ChildrenRenderProp)({ active })}

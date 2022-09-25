@@ -12,7 +12,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
   });
   return (
     <>
-      <header className="fixed top-0 w-screen rounded-b-3xl bg-rose-50 shadow-md">
+      <header className="fixed top-0 z-10 w-screen rounded-b-3xl bg-rose-50 shadow-md">
         <div className="container mx-auto flex items-center justify-between gap-3 px-4 py-2">
           <Link href="/">
             <h1 className="cursor-pointer bg-gradient-to-r from-rose-400 to-pink-600 bg-clip-text text-3xl font-extrabold text-transparent">
@@ -25,6 +25,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
                 Hey, {session?.user?.givenName}
               </p>
               <motion.div
+                role="button"
                 className="relative h-8 cursor-pointer rounded-full"
                 initial="hello"
                 whileHover="active"
