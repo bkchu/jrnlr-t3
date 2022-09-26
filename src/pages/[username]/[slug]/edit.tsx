@@ -30,10 +30,10 @@ const Edit = () => {
     }
   );
 
-  const { mutateAsync: editPost } = trpc.useMutation("post.edit", {
+  const { mutate: editPost } = trpc.useMutation("post.edit", {
     onSuccess: (editedPost) => {
       queryClient.invalidateQueries("post.getPosts");
-      router.push(`/post/${editedPost.id}`);
+      router.push(`/${editedPost.authorUsername}/${editedPost.slug}`);
     },
   });
 
