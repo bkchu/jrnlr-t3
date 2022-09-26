@@ -24,6 +24,7 @@ export const useBoop = ({
 ] => {
   const prefersReducedMotion = usePrefersReducedMotion();
   const [isBooped, setIsBooped] = useState(false);
+  // await import('react-spring')
   const style = useSpring({
     transform: isBooped
       ? `translate(${x}px, ${y}px)

@@ -6,7 +6,7 @@ import { trpc } from "../utils/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FadeIn } from "../components/FadeIn";
 import { useRouter } from "next/router";
-import NoSSR from "../components/NoSSR";
+import { NoSSR } from "../components/NoSSR";
 
 const usernameSchema = z.object({
   username: z

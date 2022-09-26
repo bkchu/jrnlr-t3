@@ -6,7 +6,7 @@ import { TbArrowLeft } from "react-icons/tb";
 import { useQueryClient } from "react-query";
 import { z } from "zod";
 import { Layout } from "../../../components/Layout";
-import NoSSR from "../../../components/NoSSR";
+import { NoSSR } from "../../../components/NoSSR";
 import { trpc } from "../../../utils/trpc";
 
 const editPostSchema = z.object({
