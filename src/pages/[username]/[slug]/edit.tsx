@@ -18,7 +18,7 @@ type EditPostSchemaType = z.infer<typeof editPostSchema>;
 
 const Edit = () => {
   const queryClient = useQueryClient();
-  const { register, handleSubmit, formState, setError, setValue, reset } =
+  const { register, handleSubmit, formState, setError, setValue } =
     useForm<EditPostSchemaType>({
       resolver: zodResolver(editPostSchema),
       reValidateMode: "onChange",
