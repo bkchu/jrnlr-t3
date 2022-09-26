@@ -217,18 +217,35 @@ const authenticatedPostRouter = createProtectedRouter()
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
 
-      const editedPost = await ctx.prisma.post.update({
-        where: {
-          id: input.postId,
-        },
-        data: {
-          ...postToEdit,
-          content: input.content,
-          title: input.title,
-        },
-      });
+      try {
+        const editedPost = await ctx.prisma.post.update({
+          where: {
+            id: input.postId,
+          },
+          data: {
+            ...postToEdit,
+            content: input.content,
+            title: input.title,
+            slug: slugify(input.title, {
+              lower: true, // convert to lower case, defaults to `false`
+              strict: true, // strip special characters except replacement, defaults to `false`
+              trim: true, // trim leading and trailing replacement chars, defaults to `true`
+            }),
+          },
+        });
 
-      return editedPost;
+        return editedPost;
+      } catch (e) {
+        if (e instanceof Prisma.PrismaClientKnownRequestError) {
+          if (e.code === "P2002") {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: "Please use a unique title.",
+              cause: e.meta,
+            });
+          }
+        }
+      }
     },
   })
   .mutation("delete", {
