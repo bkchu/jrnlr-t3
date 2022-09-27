@@ -93,7 +93,10 @@ export const MyFeedPost = ({
               }
               onPublish={invalidateFeedPost}
               onUnpublish={invalidateFeedPost}
-              onDelete={invalidateFeedPost}
+              onDelete={() => {
+                invalidateFeedPost();
+                router.push("/");
+              }}
             />
           </div>
         )}

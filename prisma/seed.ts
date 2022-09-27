@@ -53,9 +53,33 @@ const addSlugsToAllPosts = async () => {
   return Promise.all(promises);
 };
 
+const add100Posts = async () => {
+  const user = await prisma.user.findFirst();
+  const posts = await prisma.post.createMany({
+    data: new Array(100).fill({}).map((el, index) => ({
+      authorUsername: user?.username as string,
+      content: `Post content ${index}`,
+      title: `Post Title ${index}`,
+      slug: `post-title-${index}`,
+      isPublished: true,
+      isPrivate: false,
+    })),
+  });
+
+  return posts;
+};
+
 async function main() {
+  console.log("~~~SEEDING~~~");
+  return prisma.post.updateMany({
+    data: {
+      authorUsername: "bkchu",
+      isPublished: true,
+    },
+  });
   // return updatePostsToUseAuthorUsernameForeignKey();
-  return addSlugsToAllPosts();
+  // return addSlugsToAllPosts();
+  // return add100Posts();
 }
 
 main()
@@ -66,4 +90,7 @@ main()
     console.error(e);
     await prisma.$disconnect();
     process.exit(1);
+  })
+  .finally(() => {
+    console.log("~~~SEEDING END~~~");
   });

@@ -53,7 +53,10 @@ export const MyPost = ({ post }: { post: Post }) => {
             }
             onPublish={invalidatePost}
             onUnpublish={invalidatePost}
-            onDelete={invalidatePost}
+            onDelete={() => {
+              invalidatePost();
+              router.push("/");
+            }}
           />
         </div>
       </div>
