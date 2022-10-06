@@ -25,7 +25,7 @@ export const CommentsSection = () => {
       ) : (
         <div
           id="alert-additional-content-1"
-          className="my-4 rounded-lg border border-rose-300 bg-rose-50 p-4 dark:bg-rose-300"
+          className="my-4 rounded-lg border border-rose-300 bg-rose-50 p-4"
           role="alert"
         >
           <div className="text-sm text-rose-600">
