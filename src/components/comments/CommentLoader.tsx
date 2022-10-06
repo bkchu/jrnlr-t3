@@ -3,7 +3,7 @@ export const CommentLoader = () => (
     <div className="my-4">
       <div className="flex gap-2">
         <svg
-          className="h-8 w-8 text-gray-200 dark:text-gray-700"
+          className="h-8 w-8 text-gray-200"
           aria-hidden="true"
           fill="currentColor"
           viewBox="0 0 20 20"
@@ -16,10 +16,10 @@ export const CommentLoader = () => (
           ></path>
         </svg>
         <div className="flex-1">
-          <div className="mb-4 h-2.5 w-48 rounded-full bg-gray-200 dark:bg-gray-700"></div>
-          <div className="mb-2.5 h-2 max-w-[360px] rounded-full bg-gray-200 dark:bg-gray-700"></div>
-          <div className="mb-2.5 h-2 rounded-full bg-gray-200 dark:bg-gray-700"></div>
-          <div className="mb-2.5 h-2 max-w-[330px] rounded-full bg-gray-200 dark:bg-gray-700"></div>
+          <div className="mb-4 h-2.5 w-48 rounded-full bg-gray-200"></div>
+          <div className="mb-2.5 h-2 max-w-[360px] rounded-full bg-gray-200"></div>
+          <div className="mb-2.5 h-2 rounded-full bg-gray-200"></div>
+          <div className="mb-2.5 h-2 max-w-[330px] rounded-full bg-gray-200"></div>
           <span className="sr-only">Loading...</span>
         </div>
       </div>
@@ -27,7 +27,7 @@ export const CommentLoader = () => (
     <div className="my-4">
       <div className="flex gap-2">
         <svg
-          className="h-8 w-8 text-gray-200 dark:text-gray-700"
+          className="h-8 w-8 text-gray-200"
           aria-hidden="true"
           fill="currentColor"
           viewBox="0 0 20 20"
@@ -40,10 +40,10 @@ export const CommentLoader = () => (
           ></path>
         </svg>
         <div className="flex-1">
-          <div className="mb-4 h-2.5 w-48 rounded-full bg-gray-200 dark:bg-gray-700"></div>
-          <div className="mb-2.5 h-2 max-w-[360px] rounded-full bg-gray-200 dark:bg-gray-700"></div>
-          <div className="mb-2.5 h-2 rounded-full bg-gray-200 dark:bg-gray-700"></div>
-          <div className="mb-2.5 h-2 max-w-[330px] rounded-full bg-gray-200 dark:bg-gray-700"></div>
+          <div className="mb-4 h-2.5 w-48 rounded-full bg-gray-200"></div>
+          <div className="mb-2.5 h-2 max-w-[360px] rounded-full bg-gray-200"></div>
+          <div className="mb-2.5 h-2 rounded-full bg-gray-200"></div>
+          <div className="mb-2.5 h-2 max-w-[330px] rounded-full bg-gray-200"></div>
           <span className="sr-only">Loading...</span>
         </div>
       </div>
@@ -51,7 +51,7 @@ export const CommentLoader = () => (
     <div className="my-4">
       <div className="flex gap-2">
         <svg
-          className="h-8 w-8 text-gray-200 dark:text-gray-700"
+          className="h-8 w-8 text-gray-200"
           aria-hidden="true"
           fill="currentColor"
           viewBox="0 0 20 20"
@@ -64,10 +64,10 @@ export const CommentLoader = () => (
           ></path>
         </svg>
         <div className="flex-1">
-          <div className="mb-4 h-2.5 w-48 rounded-full bg-gray-200 dark:bg-gray-700"></div>
-          <div className="mb-2.5 h-2 max-w-[360px] rounded-full bg-gray-200 dark:bg-gray-700"></div>
-          <div className="mb-2.5 h-2 rounded-full bg-gray-200 dark:bg-gray-700"></div>
-          <div className="mb-2.5 h-2 max-w-[330px] rounded-full bg-gray-200 dark:bg-gray-700"></div>
+          <div className="mb-4 h-2.5 w-48 rounded-full bg-gray-200"></div>
+          <div className="mb-2.5 h-2 max-w-[360px] rounded-full bg-gray-200"></div>
+          <div className="mb-2.5 h-2 rounded-full bg-gray-200"></div>
+          <div className="mb-2.5 h-2 max-w-[330px] rounded-full bg-gray-200"></div>
           <span className="sr-only">Loading...</span>
         </div>
       </div>
