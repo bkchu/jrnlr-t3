@@ -78,7 +78,7 @@ const Create = () => {
             <div className="my-6">
               <label
                 htmlFor="title"
-                className="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-300"
+                className="mb-2 block text-sm font-medium text-gray-900"
               >
                 Title
               </label>
@@ -86,11 +86,11 @@ const Create = () => {
                 type="text"
                 id="title"
                 placeholder="Title"
-                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-rose-500 focus:ring-rose-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-rose-500 dark:focus:ring-rose-500"
+                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-rose-500 focus:ring-rose-500"
                 {...register("title")}
               />
               {!!formState.errors?.title && (
-                <p className="mt-2 text-sm text-red-600 dark:text-red-500">
+                <p className="mt-2 text-sm text-red-600">
                   <span className="font-medium">Oops! </span>
                   {formState.errors.title.message}
                 </p>
@@ -99,19 +99,19 @@ const Create = () => {
 
             <label
               htmlFor="content"
-              className="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-400"
+              className="mb-2 block text-sm font-medium text-gray-900"
             >
               Content
             </label>
             <textarea
               id="content"
-              className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-rose-500 focus:ring-rose-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-rose-500 dark:focus:ring-rose-500"
+              className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-rose-500 focus:ring-rose-500"
               rows={10}
               placeholder="What are you feeling today?"
               {...register("content")}
             ></textarea>
             {!!formState.errors?.content && (
-              <p className="mt-2 text-sm text-red-600 dark:text-red-500">
+              <p className="mt-2 text-sm text-red-600">
                 <span className="font-medium">Oops! </span>
                 {formState.errors.content.message}
               </p>
@@ -128,8 +128,8 @@ const Create = () => {
                   className="peer sr-only"
                   {...register("shouldPublishImmediately")}
                 />
-                <div className="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-rose-300 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-rose-200 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-rose-600"></div>
-                <span className="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">
+                <div className="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-rose-300 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-rose-200"></div>
+                <span className="ml-3 text-sm font-medium text-gray-900">
                   Publish immediately
                 </span>
               </label>
@@ -138,7 +138,7 @@ const Create = () => {
             <button
               type="submit"
               disabled={isPublishing}
-              className="my-6 rounded-lg bg-rose-300 px-4 py-2 text-center text-sm font-medium text-black hover:bg-rose-400 focus:outline-none focus:ring-4 focus:ring-rose-100 disabled:opacity-50 hover:disabled:opacity-50 dark:bg-rose-400 dark:hover:bg-rose-500 dark:focus:ring-rose-900"
+              className="my-6 rounded-lg bg-rose-300 px-4 py-2 text-center text-sm font-medium text-black hover:bg-rose-400 focus:outline-none focus:ring-4 focus:ring-rose-100 disabled:opacity-50 hover:disabled:opacity-50"
             >
               {watch("shouldPublishImmediately") ? "Publish" : "Save as draft"}
             </button>
