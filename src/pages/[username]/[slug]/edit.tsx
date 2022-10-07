@@ -94,7 +94,7 @@ const Edit = () => {
             <div className="my-6">
               <label
                 htmlFor="title"
-                className="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-300"
+                className="mb-2 block text-sm font-medium text-gray-900"
               >
                 Title
               </label>
@@ -102,11 +102,11 @@ const Edit = () => {
                 type="text"
                 id="title"
                 placeholder="Title"
-                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-rose-500 focus:ring-rose-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-rose-500 dark:focus:ring-rose-500"
+                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-rose-500 focus:ring-rose-500"
                 {...register("title")}
               />
               {!!formState.errors?.title && (
-                <p className="mt-2 text-sm text-red-600 dark:text-red-500">
+                <p className="mt-2 text-sm text-red-600">
                   <span className="font-medium">Oops! </span>
                   {formState.errors.title.message}
                 </p>
@@ -114,26 +114,26 @@ const Edit = () => {
             </div>
             <label
               htmlFor="content"
-              className="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-400"
+              className="mb-2 block text-sm font-medium text-gray-900"
             >
               Content
             </label>
             <textarea
               id="content"
-              className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-rose-500 focus:ring-rose-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-rose-500 dark:focus:ring-rose-500"
+              className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-rose-500 focus:ring-rose-500"
               placeholder="What are you feeling today?"
               rows={4}
               {...register("content")}
             ></textarea>
             {!!formState.errors?.content && (
-              <p className="mt-2 text-sm text-red-600 dark:text-red-500">
+              <p className="mt-2 text-sm text-red-600">
                 <span className="font-medium">Oops! </span>
                 {formState.errors.content.message}
               </p>
             )}
             <button
               type="submit"
-              className="my-6 rounded-full bg-rose-300 px-5 py-2.5 text-center text-sm font-medium text-black hover:bg-rose-400 focus:outline-none focus:ring-4 focus:ring-rose-100 dark:bg-rose-400 dark:hover:bg-rose-500 dark:focus:ring-rose-900"
+              className="my-6 rounded-full bg-rose-300 px-5 py-2.5 text-center text-sm font-medium text-black hover:bg-rose-400 focus:outline-none focus:ring-4 focus:ring-rose-100"
             >
               Update Post
             </button>
