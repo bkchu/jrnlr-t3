@@ -39,7 +39,7 @@ const unauthenticatedPostRouter = createRouter()
         take: limit + 1, // get an extra item at the end which we'll use as next cursor
         cursor: cursor ? { id: cursor } : undefined,
         orderBy: {
-          id: "asc",
+          id: "desc",
         },
       });
       let nextCursor: typeof cursor | undefined = undefined;
@@ -130,7 +130,7 @@ const authenticatedPostRouter = createProtectedRouter()
           take: limit + 1, // get an extra item at the end which we'll use as next cursor
           cursor: cursor ? { id: cursor } : undefined,
           orderBy: {
-            id: "asc",
+            id: "desc",
           },
         });
       let nextCursor: typeof cursor | undefined = undefined;
