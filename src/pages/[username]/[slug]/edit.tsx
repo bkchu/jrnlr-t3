@@ -69,7 +69,7 @@ const Edit = () => {
 
   const onSubmit: SubmitHandler<EditPostSchemaType> = ({ content, title }) => {
     editPost({
-      postId: post?.id as string,
+      postId: post?.id as number,
       content,
       title,
     });

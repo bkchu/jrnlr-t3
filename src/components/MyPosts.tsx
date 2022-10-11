@@ -1,70 +1,95 @@
 import { Post } from "@prisma/client";
-import clsx from "clsx";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { getDurationSinceDate } from "../utils/date";
+import { useWindowVirtualizer } from "@tanstack/react-virtual";
+import { useEffect } from "react";
 import { trpc } from "../utils/trpc";
-import { PostMenu } from "./posts/PostMenu";
+import { MyPostsPost } from "./MyPostsPost";
 
-export const MyPosts = ({ posts }: { posts: Post[] }) => (
-  <>
-    {posts.map((post) => (
-      <MyPost key={post.id} post={post} />
-    ))}
-  </>
-);
+export const MyPosts = () => {
+  const {
+    isLoading: isInfiniteLoading,
+    data: myInfiniteData,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+  } = trpc.useInfiniteQuery(
+    ["post.get-posts.my-posts.infinite", { limit: 10 }],
+    {
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+    }
+  );
 
-export const MyPost = ({ post }: { post: Post }) => {
-  const router = useRouter();
-  const utils = trpc.useContext();
-  const invalidatePost = () =>
-    utils.invalidateQueries(["post.get-posts.my-posts"]);
+  const allMyPosts = myInfiniteData
+    ? myInfiniteData.pages.flatMap((d) => d.posts)
+    : [];
+  const rowVirtualizer = useWindowVirtualizer({
+    count: hasNextPage ? allMyPosts.length + 1 : allMyPosts.length,
+    estimateSize: () => 96,
+    overscan: 20,
+  });
+
+  useEffect(() => {
+    const [lastItem] = [...rowVirtualizer.getVirtualItems()].reverse();
+
+    if (!lastItem) {
+      return;
+    }
+
+    if (
+      lastItem.index >= allMyPosts.length - 1 &&
+      hasNextPage &&
+      !isFetchingNextPage
+    ) {
+      fetchNextPage();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    hasNextPage,
+    fetchNextPage,
+    allMyPosts.length,
+    isFetchingNextPage,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    rowVirtualizer.getVirtualItems(),
+  ]);
+
+  if (isInfiniteLoading) {
+    return <p>Loading...</p>;
+  }
+
   return (
-    <div className="group my-8 cursor-pointer">
-      <div className="relative mb-2 flex items-center justify-between">
-        <p className="flex items-center">
-          {/* the pill showing published/unpublished */}
-          <span
-            className={clsx(
-              "inline-block rounded-full py-1 px-2 text-xs font-bold uppercase",
-              {
-                "bg-gray-200": !post.isPublished,
-                "bg-rose-200": post.isPublished,
-              }
-            )}
-          >
-            {post.isPublished ? "Published" : "Unpublished"}
-          </span>
+    <div
+      style={{
+        width: "100%",
+        position: "relative",
+      }}
+    >
+      {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+        const isLoaderRow = virtualRow.index > allMyPosts.length - 1;
+        const post = allMyPosts[virtualRow.index];
 
-          {/* the little dot */}
-          <span className="mx-2 inline-block h-1 w-1 rounded-full bg-gray-500"></span>
-
-          {/* the time passed since createdAt */}
-          <span className="text-sm text-gray-500">
-            {getDurationSinceDate(post.createdAt)}
-          </span>
-        </p>
-        <div className="absolute -top-1 right-0">
-          <PostMenu
-            isPublished={post.isPublished}
-            postId={post.id}
-            onEdit={() =>
-              router.push(`/${post.authorUsername}/${post.slug}/edit`)
-            }
-            onPublish={invalidatePost}
-            onUnpublish={invalidatePost}
-            onDelete={() => {
-              invalidatePost();
-              router.push("/");
+        return (
+          <div
+            key={virtualRow.index}
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: `${virtualRow.size}px`,
+              transform: `translateY(${virtualRow.start}px)`,
             }}
-          />
-        </div>
-      </div>
-      <Link href={`/${post.authorUsername}/${post.slug}`}>
-        <div className="prose">
-          <h2 className="group-hover:text-rose-400">{post.title}</h2>
-        </div>
-      </Link>
+          >
+            {isLoaderRow ? (
+              hasNextPage ? (
+                "Loading more..."
+              ) : (
+                "Nothing more to load"
+              )
+            ) : (
+              <MyPostsPost key={post?.id} post={post ?? ({} as Post)} />
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 };

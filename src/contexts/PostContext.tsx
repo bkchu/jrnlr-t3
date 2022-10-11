@@ -8,8 +8,8 @@ import {
 } from "react";
 
 type PostContextType = {
-  postId: string;
-  setPostId: Dispatch<SetStateAction<string>>;
+  postId: number;
+  setPostId: Dispatch<SetStateAction<number>>;
 };
 const PostContext = createContext<PostContextType>({} as PostContextType);
 
@@ -19,10 +19,10 @@ export const PostProvider = ({
   initialPostId,
   children,
 }: {
-  initialPostId: string;
+  initialPostId: number;
   children: ReactNode;
 }) => {
-  const [postId, setPostId] = useState<string>(initialPostId);
+  const [postId, setPostId] = useState<number>(initialPostId);
 
   return (
     <PostContext.Provider value={{ postId, setPostId }}>

@@ -1,34 +1,11 @@
-import { createSSGHelpers } from "@trpc/react/ssg";
 import clsx from "clsx";
-import type { GetServerSideProps, NextPage } from "next";
-import { unstable_getServerSession } from "next-auth";
+import type { NextPage } from "next";
 import Link from "next/link";
 import { useState } from "react";
-import superjson from "superjson";
 import { Layout } from "../components/Layout";
 import { MyFeed } from "../components/MyFeed";
 import { MyPosts } from "../components/MyPosts";
-import { prisma } from "../server/db/client";
-import { appRouter } from "../server/router";
 import { trpc } from "../utils/trpc";
-import { authOptions } from "./api/auth/[...nextauth]";
-
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  const session = await unstable_getServerSession(req, res, authOptions);
-  const ssg = createSSGHelpers({
-    router: appRouter,
-    ctx: { session, prisma: prisma },
-    transformer: superjson, // optional - adds superjson serialization
-  });
-
-  await ssg.fetchQuery("post.get-posts.feed");
-
-  return {
-    props: {
-      trpcState: ssg.dehydrate(),
-    },
-  };
-};
 
 const Home: NextPage = () => {
   const { isLoading, data: session } = trpc.useQuery(["auth.getSession"], {
@@ -37,20 +14,6 @@ const Home: NextPage = () => {
 
   const [isMyPosts, setIsMyPosts] = useState(
     () => !isLoading && !session?.user.id
-  );
-
-  const { isLoading: isLoadingMyPosts, data: myPosts } = trpc.useQuery(
-    ["post.get-posts.my-posts"],
-    {
-      enabled: isMyPosts,
-    }
-  );
-
-  const { isLoading: isLoadingFeed, data: feedPosts } = trpc.useQuery(
-    ["post.get-posts.feed"],
-    {
-      enabled: !isMyPosts,
-    }
   );
 
   const activeTabStyle = "bg-rose-200";
@@ -81,23 +44,7 @@ const Home: NextPage = () => {
       )}
 
       <main className="container mx-auto mt-4">
-        {isMyPosts ? (
-          <>
-            {isLoadingMyPosts ? (
-              <p>Loading posts...</p>
-            ) : (
-              <MyPosts posts={myPosts ?? []} />
-            )}
-          </>
-        ) : (
-          <>
-            {isLoadingFeed ? (
-              <p>Loading posts...</p>
-            ) : (
-              <MyFeed posts={feedPosts ?? []} />
-            )}
-          </>
-        )}
+        {isMyPosts ? <MyPosts /> : <MyFeed />}
       </main>
 
       {!!session?.user.id && (

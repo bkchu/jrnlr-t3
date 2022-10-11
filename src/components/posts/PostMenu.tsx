@@ -2,7 +2,7 @@ import { trpc } from "../../utils/trpc";
 import { Menu } from "../Menu";
 
 type PostMenuProps = {
-  postId: string;
+  postId: number;
   isPublished: boolean;
   onEdit?: () => void;
   onPublish?: () => void;

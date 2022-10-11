@@ -53,11 +53,20 @@ const addSlugsToAllPosts = async () => {
   return Promise.all(promises);
 };
 
+const clearDb = async () => {
+  await prisma.commentLike.deleteMany({});
+  await prisma.postLike.deleteMany({});
+  await prisma.comment.deleteMany({});
+  await prisma.post.deleteMany({});
+};
+
 const add100Posts = async () => {
   const user = await prisma.user.findFirst();
+
   const posts = await prisma.post.createMany({
     data: new Array(100).fill({}).map((el, index) => ({
       authorUsername: user?.username as string,
+      id: index + 1,
       content: `Post content ${index}`,
       title: `Post Title ${index}`,
       slug: `post-title-${index}`,
@@ -69,17 +78,52 @@ const add100Posts = async () => {
   return posts;
 };
 
-async function main() {
-  console.log("~~~SEEDING~~~");
-  return prisma.post.updateMany({
-    data: {
-      authorUsername: "bkchu",
-      isPublished: true,
+const convertPostsToAutoIncrement = async () => {
+  const posts = await prisma.post.findMany({
+    orderBy: {
+      createdAt: "asc",
     },
   });
-  // return updatePostsToUseAuthorUsernameForeignKey();
-  // return addSlugsToAllPosts();
-  // return add100Posts();
+
+  const promises = posts.map((post: { id: any }, i: number) => {
+    const newId = `${i + 1}`;
+    // go through each comment with the post id, and update the comment's post id
+    const arr = [
+      prisma.comment.updateMany({
+        where: {
+          postId: post.id,
+        },
+        data: {
+          postId: newId as any,
+        },
+      }),
+      prisma.postLike.updateMany({
+        where: {
+          postId: post.id,
+        },
+        data: {
+          postId: newId as any,
+        },
+      }),
+      prisma.post.update({
+        where: {
+          id: post.id,
+        },
+        data: {
+          id: newId as any,
+        },
+      }),
+    ];
+    // go through each postLike with the postId, and update the postLike's post id
+    return Promise.all(arr);
+  });
+
+  await Promise.all(promises);
+};
+
+async function main() {
+  console.log("~~~SEEDING~~~");
+  await convertPostsToAutoIncrement();
 }
 
 main()

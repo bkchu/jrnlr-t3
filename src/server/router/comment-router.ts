@@ -7,7 +7,7 @@ export const unauthenticatedCommentRouter = createRouter().query(
   "get-comments-by-post-id",
   {
     input: z.object({
-      postId: z.string(),
+      postId: z.number(),
     }),
     async resolve({ ctx, input }) {
       const comments = await ctx.prisma.post
@@ -85,7 +85,7 @@ export const unauthenticatedCommentRouter = createRouter().query(
 export const authenticatedCommentRouter = createProtectedRouter()
   .mutation("add-comment", {
     input: z.object({
-      postId: z.string(),
+      postId: z.number(),
       parentId: z.string().optional(),
       content: z.string().min(1),
     }),
