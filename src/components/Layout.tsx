@@ -27,13 +27,13 @@ export const Layout = ({ children }: { children: ReactNode }) => {
               <motion.div
                 role="button"
                 className="relative h-8 cursor-pointer rounded-full"
-                initial="hello"
+                initial="initial"
                 whileHover="active"
               >
                 <motion.div
                   className="absolute inset-0 rounded-full bg-rose-300"
                   variants={{
-                    hello: {
+                    initial: {
                       opacity: 0,
                       scale: 1,
                     },
@@ -76,7 +76,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
           )}
         </div>
       </header>
-      <div className="container mx-auto mt-16 p-4">{children}</div>
+      <div className="container mx-auto p-4 pt-16">{children}</div>
     </>
   );
 };

@@ -1,9 +1,7 @@
 import { createSSGHelpers } from "@trpc/react/ssg";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { unstable_getServerSession } from "next-auth";
-import { signIn, signOut } from "next-auth/react";
 import Head from "next/head";
-import Link from "next/link";
 import superjson from "superjson";
 import { CommentLoader } from "../../../components/comments/CommentLoader";
 import { CommentsSection } from "../../../components/comments/CommentsSection";
@@ -19,7 +17,7 @@ import { authOptions } from "../../api/auth/[...nextauth]";
 type PostGetPostResponse = inferQueryOutput<"post.get-post">;
 
 export const getServerSideProps: GetServerSideProps<{
-  postId: string;
+  postId: number;
   authorUsername: string;
   postSlug: string;
 }> = async ({ params, req, res }) => {
@@ -50,11 +48,6 @@ export const getServerSideProps: GetServerSideProps<{
 const PostPage = (
   props: InferGetServerSidePropsType<typeof getServerSideProps>
 ) => {
-  const { data: session } = trpc.useQuery(["auth.getSession"], {
-    retry: 1,
-    refetchOnWindowFocus: false,
-  });
-
   const { data: post, isLoading: isLoadingPost } = trpc.useQuery([
     "post.get-post",
     {

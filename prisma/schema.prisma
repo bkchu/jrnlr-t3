@@ -71,7 +71,7 @@ model VerificationToken {
 }
 
 model Post {
-  id          String  @id @default(cuid())
+  id          Int     @id @default(autoincrement())
   title       String  @db.VarChar(300)
   content     String  @db.MediumText
   slug        String
@@ -99,8 +99,8 @@ model Comment {
   author   User?   @relation(fields: [authorId], references: [id])
   authorId String?
 
-  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
-  postId String
+  post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId Int
 
   replies  Comment[] @relation("comment_children")
   parent   Comment?  @relation("comment_children", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -120,8 +120,8 @@ model PostLike {
   user   User   @relation(fields: [userId], references: [id])
   userId String
 
-  post   Post   @relation(fields: [postId], references: [id])
-  postId String
+  post   Post @relation(fields: [postId], references: [id])
+  postId Int
 
   @@unique([postId, userId])
   @@index([postId, userId])

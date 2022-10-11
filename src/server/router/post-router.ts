@@ -6,8 +6,14 @@ import { createRouter } from "./context";
 import { createProtectedRouter } from "./protected-router";
 
 const unauthenticatedPostRouter = createRouter()
-  .query("get-posts.feed", {
-    async resolve({ ctx }) {
+  .query("get-posts.feed.infinite", {
+    input: z.object({
+      limit: z.number().min(1).max(100).nullish(),
+      cursor: z.number().nullish(), // <-- "cursor" needs to exist, but can be any type
+    }),
+    async resolve({ ctx, input }) {
+      const limit = input.limit ?? 10;
+      const { cursor } = input;
       const posts = await ctx.prisma.post.findMany({
         where: {
           isPublished: true,
@@ -30,19 +36,28 @@ const unauthenticatedPostRouter = createRouter()
             },
           },
         },
+        take: limit + 1, // get an extra item at the end which we'll use as next cursor
+        cursor: cursor ? { id: cursor } : undefined,
         orderBy: {
-          createdAt: "desc",
+          id: "asc",
         },
       });
-
-      // put a simple boolean 'liked'
-      return posts.map((post) => ({
-        ...post,
-        liked:
-          ctx.session && ctx.session.user
-            ? post.likes.find((like) => like.userId === ctx.session?.user?.id)
-            : false,
-      }));
+      let nextCursor: typeof cursor | undefined = undefined;
+      if (posts.length > limit) {
+        const nextPost = posts.pop();
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        nextCursor = nextPost!.id;
+      }
+      return {
+        posts: posts.map((post) => ({
+          ...post,
+          liked:
+            ctx.session && ctx.session.user
+              ? post.likes.find((like) => like.userId === ctx.session?.user?.id)
+              : false,
+        })),
+        nextCursor,
+      };
     },
   })
   .query("get-post", {
@@ -86,17 +101,24 @@ const unauthenticatedPostRouter = createRouter()
   });
 
 const authenticatedPostRouter = createProtectedRouter()
-  .query("get-posts.my-posts", {
-    async resolve({ ctx }) {
-      const myPosts = await ctx.prisma.user
+  .query("get-posts.my-posts.infinite", {
+    input: z.object({
+      limit: z.number().min(1).max(100).nullish(),
+      cursor: z.number().nullish(), // <-- "cursor" needs to exist, but can be any type
+    }),
+    async resolve({ ctx, input }) {
+      const limit = input.limit ?? 10;
+      const { cursor } = input;
+      const posts = await ctx.prisma.user
         .findUnique({
           where: {
             id: ctx.session.user.id,
           },
         })
         .posts({
-          orderBy: {
-            createdAt: "desc",
+          where: {
+            isPublished: true,
+            isPrivate: false,
           },
           include: {
             author: {
@@ -105,14 +127,27 @@ const authenticatedPostRouter = createProtectedRouter()
               },
             },
           },
+          take: limit + 1, // get an extra item at the end which we'll use as next cursor
+          cursor: cursor ? { id: cursor } : undefined,
+          orderBy: {
+            id: "asc",
+          },
         });
-
-      return myPosts;
+      let nextCursor: typeof cursor | undefined = undefined;
+      if (posts.length > limit) {
+        const nextPost = posts.pop();
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        nextCursor = nextPost!.id;
+      }
+      return {
+        posts,
+        nextCursor,
+      };
     },
   })
   .mutation("publish", {
     input: z.object({
-      postId: z.string(),
+      postId: z.number(),
     }),
     async resolve({ ctx, input }) {
       const post = await ctx.prisma.post.findUniqueOrThrow({
@@ -137,7 +172,7 @@ const authenticatedPostRouter = createProtectedRouter()
   })
   .mutation("unpublish", {
     input: z.object({
-      postId: z.string(),
+      postId: z.number(),
     }),
     async resolve({ ctx, input }) {
       const post = await ctx.prisma.post.findUniqueOrThrow({
@@ -202,7 +237,7 @@ const authenticatedPostRouter = createProtectedRouter()
   })
   .mutation("edit", {
     input: z.object({
-      postId: z.string(),
+      postId: z.number(),
       title: z.string().min(1),
       content: z.string().min(1),
     }),
@@ -250,7 +285,7 @@ const authenticatedPostRouter = createProtectedRouter()
   })
   .mutation("delete", {
     input: z.object({
-      postId: z.string(),
+      postId: z.number(),
     }),
     async resolve({ ctx, input }) {
       const postToDelete = await ctx.prisma.post.findUniqueOrThrow({
@@ -272,7 +307,7 @@ const authenticatedPostRouter = createProtectedRouter()
   })
   .mutation("like", {
     input: z.object({
-      postId: z.string().min(1),
+      postId: z.number().min(1),
     }),
     async resolve({ ctx, input }) {
       const like = await ctx.prisma.postLike.create({
@@ -295,7 +330,7 @@ const authenticatedPostRouter = createProtectedRouter()
   })
   .mutation("unlike", {
     input: z.object({
-      postId: z.string().min(1),
+      postId: z.number().min(1),
     }),
     async resolve({ ctx, input }) {
       const existingLike = await ctx.prisma.postLike.findUniqueOrThrow({
