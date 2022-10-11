@@ -7,23 +7,6 @@ import { MyFeed } from "../components/MyFeed";
 import { MyPosts } from "../components/MyPosts";
 import { trpc } from "../utils/trpc";
 
-// export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-//   const session = await unstable_getServerSession(req, res, authOptions);
-//   const ssg = createSSGHelpers({
-//     router: appRouter,
-//     ctx: { session, prisma: prisma },
-//     transformer: superjson, // optional - adds superjson serialization
-//   });
-
-//   await ssg.fetchQuery("post.get-posts.feed");
-
-//   return {
-//     props: {
-//       trpcState: ssg.dehydrate(),
-//     },
-//   };
-// };
-
 const Home: NextPage = () => {
   const { isLoading, data: session } = trpc.useQuery(["auth.getSession"], {
     retry: 1,
