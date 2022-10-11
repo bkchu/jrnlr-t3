@@ -10,7 +10,7 @@ export const MyPostsPost = ({ post }: { post: Post }) => {
   const router = useRouter();
   const utils = trpc.useContext();
   const invalidatePost = () =>
-    utils.invalidateQueries(["post.get-posts.my-posts"]);
+    utils.invalidateQueries(["post.get-posts.my-posts.infinite"]);
   return (
     <div className="group mb-8 cursor-pointer">
       <div className="relative mb-2 flex items-center justify-between">
