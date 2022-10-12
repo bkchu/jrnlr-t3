@@ -62,14 +62,18 @@ const clearDb = async () => {
 
 const add100Posts = async () => {
   const user = await prisma.user.findFirst();
-
+  const latestPost = await prisma.post.findFirst({
+    orderBy: {
+      id: "desc",
+    },
+  });
+  const latestPostId = latestPost?.id ?? 0;
   const posts = await prisma.post.createMany({
     data: new Array(100).fill({}).map((el, index) => ({
       authorUsername: user?.username as string,
-      id: index + 1,
-      content: `Post content ${index}`,
-      title: `Post Title ${index}`,
-      slug: `post-title-${index}`,
+      content: `Post content ${latestPostId + index + 1}`,
+      title: `Post Title ${latestPostId + index + 1}`,
+      slug: `post-title-${latestPostId + index + 1}`,
       isPublished: true,
       isPrivate: false,
     })),
@@ -123,7 +127,8 @@ const convertPostsToAutoIncrement = async () => {
 
 async function main() {
   console.log("~~~SEEDING~~~");
-  await convertPostsToAutoIncrement();
+  // await convertPostsToAutoIncrement();
+  await add100Posts();
 }
 
 main()
