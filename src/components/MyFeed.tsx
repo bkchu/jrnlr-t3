@@ -24,7 +24,7 @@ export const MyFeed = () => {
   const rowVirtualizer = useWindowVirtualizer({
     count: hasNextPage ? allFeedPosts.length + 1 : allFeedPosts.length,
     estimateSize: () => 152,
-    overscan: 10,
+    overscan: 5,
   });
 
   useEffect(() => {
@@ -69,12 +69,12 @@ export const MyFeed = () => {
         return (
           <div
             key={virtualRow.index}
+            ref={virtualRow.measureElement}
             style={{
               position: "absolute",
               top: 0,
               left: 0,
               width: "100%",
-              height: `${virtualRow.size}px`,
               transform: `translateY(${virtualRow.start}px)`,
             }}
           >
