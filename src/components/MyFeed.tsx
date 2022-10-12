@@ -1,6 +1,5 @@
-import { useWindowVirtualizer } from "@tanstack/react-virtual";
-import { useEffect } from "react";
 import { inferQueryOutput, trpc } from "../utils/trpc";
+import { VirtualizedList } from "./lib/VirtualizedList";
 import { MyFeedPost } from "./MyFeedPost";
 
 type PostType = ArrayElement<
@@ -9,7 +8,6 @@ type PostType = ArrayElement<
 
 export const MyFeed = () => {
   const {
-    isLoading: isInfiniteLoading,
     data: myInfiniteData,
     hasNextPage,
     isFetchingNextPage,
@@ -21,75 +19,22 @@ export const MyFeed = () => {
   const allFeedPosts = myInfiniteData
     ? myInfiniteData.pages.flatMap((d) => d.posts)
     : [];
-  const rowVirtualizer = useWindowVirtualizer({
-    count: hasNextPage ? allFeedPosts.length + 1 : allFeedPosts.length,
-    estimateSize: () => 152,
-    overscan: 5,
-  });
-
-  useEffect(() => {
-    const [lastItem] = [...rowVirtualizer.getVirtualItems()].reverse();
-
-    if (!lastItem) {
-      return;
-    }
-
-    if (
-      lastItem.index >= allFeedPosts.length - 1 &&
-      hasNextPage &&
-      !isFetchingNextPage
-    ) {
-      fetchNextPage();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    hasNextPage,
-    fetchNextPage,
-    allFeedPosts.length,
-    isFetchingNextPage,
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    rowVirtualizer.getVirtualItems(),
-  ]);
-
-  if (isInfiniteLoading) {
-    return <p>Loading...</p>;
-  }
 
   return (
-    <div
-      style={{
-        width: "100%",
-        position: "relative",
-      }}
-    >
-      {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-        const isLoaderRow = virtualRow.index > allFeedPosts.length - 1;
-        const post = allFeedPosts[virtualRow.index];
-
-        return (
-          <div
-            key={virtualRow.index}
-            ref={virtualRow.measureElement}
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              transform: `translateY(${virtualRow.start}px)`,
-            }}
-          >
-            {isLoaderRow ? (
-              hasNextPage ? (
-                "Loading more..."
-              ) : (
-                "Nothing more to load"
-              )
-            ) : (
-              <MyFeedPost key={post?.id} post={post ?? ({} as PostType)} />
-            )}
-          </div>
-        );
-      })}
-    </div>
+    <>
+      {myInfiniteData && (
+        <VirtualizedList
+          data={allFeedPosts}
+          hasNextPage={hasNextPage}
+          isFetchingNextPage={isFetchingNextPage}
+          fetchNextPage={fetchNextPage}
+          estimateSize={() => 160}
+        >
+          {(post) => (
+            <MyFeedPost key={post?.id} post={post ?? ({} as PostType)} />
+          )}
+        </VirtualizedList>
+      )}
+    </>
   );
 };

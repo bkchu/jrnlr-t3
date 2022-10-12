@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Layout } from "../components/Layout";
 import { MyFeed } from "../components/MyFeed";
 import { MyPosts } from "../components/MyPosts";
+import { useWindowDimensions } from "../hooks/useWindowDimensions";
 import { trpc } from "../utils/trpc";
 
 const Home: NextPage = () => {
@@ -17,6 +18,8 @@ const Home: NextPage = () => {
   );
 
   const activeTabStyle = "bg-rose-200";
+
+  const { width, height } = useWindowDimensions();
 
   return (
     <Layout>
@@ -44,7 +47,14 @@ const Home: NextPage = () => {
       )}
 
       <main className="container mx-auto mt-4">
-        {isMyPosts ? <MyPosts /> : <MyFeed />}
+        {/* the key={width/height} is a hack to make the list rerender on screen-size changes
+            since the tanstack-virtual doesn't rerender by default
+         */}
+        {isMyPosts ? (
+          <MyPosts key={`${width}${height}`} />
+        ) : (
+          <MyFeed key={`${width}${height}`} />
+        )}
       </main>
 
       {!!session?.user.id && (
