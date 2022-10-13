@@ -5,19 +5,17 @@ import { useRouter } from "next/router";
 import pluralize from "pluralize";
 import { animated } from "react-spring";
 import { useGrowBoop } from "../hooks/useBoop";
+import { usePostLike, usePostUnlike } from "../queries/post";
 import { getDurationSinceDate } from "../utils/date";
 import { inferQueryOutput, trpc } from "../utils/trpc";
 import { NoSSR } from "./NoSSR";
 import { PostMenu } from "./posts/PostMenu";
 
-type PostGetPostsResponse =
-  inferQueryOutput<"post.get-posts.feed.infinite">["posts"];
+type Post = ArrayElement<
+  inferQueryOutput<"post.get-posts.feed.infinite">["posts"]
+>;
 
-export const MyFeedPost = ({
-  post,
-}: {
-  post: ArrayElement<PostGetPostsResponse>;
-}) => {
+export const MyFeedPost = ({ post }: { post: Post }) => {
   const router = useRouter();
   const utils = trpc.useContext();
 
@@ -28,13 +26,9 @@ export const MyFeedPost = ({
     enabled: false,
   });
 
-  const { mutate: like } = trpc.useMutation("post.like", {
-    onSuccess: invalidateFeedPost,
-  });
+  const { mutate: like } = usePostLike(post);
 
-  const { mutate: unlike } = trpc.useMutation("post.unlike", {
-    onSuccess: invalidateFeedPost,
-  });
+  const { mutate: unlike } = usePostUnlike(post);
 
   const [growStyle, growTrigger] = useGrowBoop();
 
