@@ -5,26 +5,29 @@ import { useRouter } from "next/router";
 import pluralize from "pluralize";
 import { animated } from "react-spring";
 import { useGrowBoop } from "../hooks/useBoop";
-import { usePostLike, usePostUnlike } from "../queries/post";
+import {
+  useOptimisticallyUpdateInfiniteFeedPosts,
+  usePostLike,
+  usePostUnlike,
+} from "../queries/post";
 import { getDurationSinceDate } from "../utils/date";
 import { inferQueryOutput, trpc } from "../utils/trpc";
 import { NoSSR } from "./NoSSR";
 import { PostMenu } from "./posts/PostMenu";
 
-type Post = ArrayElement<
-  inferQueryOutput<"post.get-posts.feed.infinite">["posts"]
->;
+type GetPostsFeedInfiniteResponse =
+  inferQueryOutput<"post.get-posts.feed.infinite">;
+
+type Post = ArrayElement<GetPostsFeedInfiniteResponse["posts"]>;
 
 export const MyFeedPost = ({ post }: { post: Post }) => {
   const router = useRouter();
-  const utils = trpc.useContext();
-
-  const invalidateFeedPost = () =>
-    utils.invalidateQueries(["post.get-posts.feed.infinite"]);
 
   const { data: session } = trpc.useQuery(["auth.getSession"], {
     enabled: false,
   });
+
+  const updateInfinitePosts = useOptimisticallyUpdateInfiniteFeedPosts();
 
   const { mutate: like } = usePostLike(post);
 
@@ -78,12 +81,12 @@ export const MyFeedPost = ({ post }: { post: Post }) => {
               onEdit={() =>
                 router.push(`/${post.authorUsername}/${post.slug}/edit`)
               }
-              onPublish={invalidateFeedPost}
-              onUnpublish={invalidateFeedPost}
-              onDelete={() => {
-                invalidateFeedPost();
-                router.push("/");
-              }}
+              onUnpublish={updateInfinitePosts((oldPosts) =>
+                oldPosts.filter((oldPost) => oldPost.id !== post.id)
+              )}
+              onDelete={updateInfinitePosts((oldPosts) =>
+                oldPosts.filter((oldPost) => oldPost.id !== post.id)
+              )}
             />
           </div>
         )}

@@ -117,7 +117,6 @@ const authenticatedPostRouter = createProtectedRouter()
         })
         .posts({
           where: {
-            isPublished: true,
             isPrivate: false,
           },
           include: {

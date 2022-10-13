@@ -102,11 +102,21 @@ export const Post = ({ post }: { post: PostGetPostResponse }) => {
               onEdit={() =>
                 router.push(`/${post.authorUsername}/${post.slug}/edit`)
               }
-              onPublish={invalidatePost}
-              onUnpublish={invalidatePost}
-              onDelete={() => {
-                invalidatePost();
-                router.push("/");
+              onPublish={{
+                async onSuccess() {
+                  invalidatePost();
+                },
+              }}
+              onUnpublish={{
+                async onSuccess() {
+                  invalidatePost();
+                },
+              }}
+              onDelete={{
+                async onSuccess() {
+                  invalidatePost();
+                  router.push("/");
+                },
               }}
             />
           )}

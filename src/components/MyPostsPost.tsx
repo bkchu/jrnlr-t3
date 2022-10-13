@@ -2,15 +2,14 @@ import { Post } from "@prisma/client";
 import clsx from "clsx";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useOptimisticallyUpdateInfiniteMyPosts } from "../queries/post";
 import { getDurationSinceDate } from "../utils/date";
-import { trpc } from "../utils/trpc";
 import { PostMenu } from "./posts/PostMenu";
 
 export const MyPostsPost = ({ post }: { post: Post }) => {
   const router = useRouter();
-  const utils = trpc.useContext();
-  const invalidatePost = () =>
-    utils.invalidateQueries(["post.get-posts.my-posts.infinite"]);
+  const updateInfinitePosts = useOptimisticallyUpdateInfiniteMyPosts();
+
   return (
     <div className="group mb-8 cursor-pointer">
       <div className="relative mb-2 flex items-center justify-between">
@@ -43,12 +42,22 @@ export const MyPostsPost = ({ post }: { post: Post }) => {
             onEdit={() =>
               router.push(`/${post.authorUsername}/${post.slug}/edit`)
             }
-            onPublish={invalidatePost}
-            onUnpublish={invalidatePost}
-            onDelete={() => {
-              invalidatePost();
-              router.push("/");
-            }}
+            onPublish={updateInfinitePosts((oldPosts) =>
+              oldPosts.map((oldPost) => ({
+                ...oldPost,
+                isPublished: oldPost.id === post.id || oldPost.isPublished,
+              }))
+            )}
+            onUnpublish={updateInfinitePosts((oldPosts) =>
+              oldPosts.map((oldPost) => ({
+                ...oldPost,
+                isPublished:
+                  oldPost.id === post.id ? false : oldPost.isPublished,
+              }))
+            )}
+            onDelete={updateInfinitePosts((oldPosts) =>
+              oldPosts.filter((oldPost) => oldPost.id !== post.id)
+            )}
           />
         </div>
       </div>

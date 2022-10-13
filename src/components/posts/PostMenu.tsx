@@ -1,13 +1,40 @@
 import { trpc } from "../../utils/trpc";
 import { Menu } from "../Menu";
 
+type MutationOptions = {
+  onSuccess?:
+    | ((
+        data: unknown,
+        variables: {
+          postId: number;
+        },
+        context: unknown
+      ) => void | Promise<unknown>)
+    | undefined;
+  onError?:
+    | ((
+        err: unknown,
+        variables: { postId: number },
+        ctx: unknown
+      ) => void | Promise<unknown>)
+    | undefined;
+  onSettled?:
+    | ((
+        data: unknown | undefined,
+        err: unknown,
+        variables: { postId: number },
+        ctx: unknown
+      ) => void | Promise<unknown>)
+    | undefined;
+};
+
 type PostMenuProps = {
   postId: number;
   isPublished: boolean;
   onEdit?: () => void;
-  onPublish?: () => void;
-  onUnpublish?: () => void;
-  onDelete?: () => void;
+  onPublish?: MutationOptions;
+  onUnpublish?: MutationOptions;
+  onDelete?: MutationOptions;
 };
 
 export const PostMenu = ({
@@ -18,23 +45,17 @@ export const PostMenu = ({
   onUnpublish,
   onDelete,
 }: PostMenuProps) => {
-  const { mutateAsync: publishPost } = trpc.useMutation("post.publish", {
-    onSuccess: () => {
-      onPublish?.();
-    },
-  });
+  const { mutateAsync: publishPost } = trpc.useMutation(
+    "post.publish",
+    onPublish
+  );
 
-  const { mutateAsync: unpublishPost } = trpc.useMutation("post.unpublish", {
-    onSuccess: () => {
-      onUnpublish?.();
-    },
-  });
+  const { mutateAsync: unpublishPost } = trpc.useMutation(
+    "post.unpublish",
+    onUnpublish
+  );
 
-  const { mutateAsync: deletePost } = trpc.useMutation("post.delete", {
-    onSuccess: () => {
-      onDelete?.();
-    },
-  });
+  const { mutateAsync: deletePost } = trpc.useMutation("post.delete", onDelete);
 
   return (
     <Menu
