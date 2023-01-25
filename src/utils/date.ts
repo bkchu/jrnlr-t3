@@ -6,17 +6,23 @@ export const getDurationSinceDate = (date: Date) => {
     end: Date.now(),
   });
 
+  const normalDate = new Date(date).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+
   if (duration.years) {
-    return `${duration.years}y ago`;
+    return normalDate;
   }
   if (duration.months) {
-    return `${duration.months}m ago`;
+    return normalDate;
   }
   if (duration.weeks) {
-    return `${duration.weeks}w ago`;
+    return normalDate;
   }
   if (duration.days) {
-    return `${duration.days}d ago`;
+    return normalDate;
   }
   if (duration.hours) {
     return `${duration.hours}h ago`;
